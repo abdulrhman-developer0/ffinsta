@@ -14,27 +14,86 @@ window.imageViewer = function() {
         }
     }
 }
+// Custom Emoji Inline Tool
+class EmojiInlineTool {
+    static get isInline() { return true; }
+    static get title() { return 'Emoji'; }
+    
+    constructor({ api }) {
+        this.api = api;
+        this.button = null;
+        this.pickerContainer = null;
+        this.state = false;
+    }
 
-// Custom independent Headings extending the base Header tool
-if (typeof Header !== 'undefined') {
-    window.Heading1 = class extends Header {
-        static get toolbox() { return { ...super.toolbox, title: 'Heading 1', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
-    };
-    window.Heading2 = class extends Header {
-        static get toolbox() { return { ...super.toolbox, title: 'Heading 2', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
-    };
-    window.Heading3 = class extends Header {
-        static get toolbox() { return { ...super.toolbox, title: 'Heading 3', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
-    };
-    window.Heading4 = class extends Header {
-        static get toolbox() { return { ...super.toolbox, title: 'Heading 4', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
-    };
-    window.Heading5 = class extends Header {
-        static get toolbox() { return { ...super.toolbox, title: 'Heading 5', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
-    };
-    window.Heading6 = class extends Header {
-        static get toolbox() { return { ...super.toolbox, title: 'Heading 6', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
-    };
+    render() {
+        this.button = document.createElement('button');
+        this.button.type = 'button';
+        this.button.innerHTML = '😀';
+        this.button.classList.add(this.api.styles.inlineToolButton);
+        return this.button;
+    }
+
+    surround(range) {
+        if (!this.state) {
+            this.showPicker(range);
+        } else {
+            this.hidePicker();
+        }
+    }
+    
+    showPicker(range) {
+        this.state = true;
+        this.button.classList.add(this.api.styles.inlineToolButtonActive);
+        
+        this.pickerContainer = document.createElement('div');
+        this.pickerContainer.style.position = 'absolute';
+        this.pickerContainer.style.zIndex = '9999';
+        this.pickerContainer.style.backgroundColor = 'white';
+        this.pickerContainer.style.boxShadow = '0 10px 15px -3px rgb(0 0 0 / 0.1)';
+        this.pickerContainer.style.borderRadius = '0.75rem';
+        this.pickerContainer.style.overflow = 'hidden';
+        
+        const picker = document.createElement('emoji-picker');
+        picker.addEventListener('emoji-click', event => {
+            const emoji = event.detail.unicode;
+            const textNode = document.createTextNode(emoji);
+            range.insertNode(textNode);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            this.hidePicker();
+        });
+        
+        this.pickerContainer.appendChild(picker);
+        document.body.appendChild(this.pickerContainer);
+        
+        const rect = this.button.getBoundingClientRect();
+        this.pickerContainer.style.top = (rect.bottom + window.scrollY + 10) + 'px';
+        this.pickerContainer.style.left = rect.left + 'px';
+        
+        this.closeHandler = (e) => {
+            if (!this.pickerContainer.contains(e.target) && !this.button.contains(e.target)) {
+                this.hidePicker();
+            }
+        };
+        setTimeout(() => document.addEventListener('click', this.closeHandler), 10);
+    }
+    
+    hidePicker() {
+        this.state = false;
+        this.button.classList.remove(this.api.styles.inlineToolButtonActive);
+        if (this.pickerContainer) {
+            this.pickerContainer.remove();
+            this.pickerContainer = null;
+        }
+        if (this.closeHandler) {
+            document.removeEventListener('click', this.closeHandler);
+        }
+    }
+
+    checkState() { return this.state; }
 }
 
 window.editorConfig = (holderId, placeholder, isRtl, initialData) => {
@@ -43,14 +102,7 @@ window.editorConfig = (holderId, placeholder, isRtl, initialData) => {
     let tools = {};
 
     // Map server config to actual JS classes loaded via CDN
-    if (typeof Header !== 'undefined') {
-        if (serverTools.heading1) tools.heading1 = { ...serverTools.heading1, class: window.Heading1 };
-        if (serverTools.heading2) tools.heading2 = { ...serverTools.heading2, class: window.Heading2 };
-        if (serverTools.heading3) tools.heading3 = { ...serverTools.heading3, class: window.Heading3 };
-        if (serverTools.heading4) tools.heading4 = { ...serverTools.heading4, class: window.Heading4 };
-        if (serverTools.heading5) tools.heading5 = { ...serverTools.heading5, class: window.Heading5 };
-        if (serverTools.heading6) tools.heading6 = { ...serverTools.heading6, class: window.Heading6 };
-    }
+    if (serverTools.header && typeof Header !== 'undefined') { tools.header = { ...serverTools.header, class: Header }; }
     if (serverTools.quote && typeof Quote !== 'undefined') {
         tools.quote = { ...serverTools.quote, class: Quote };
     }
@@ -84,39 +136,11 @@ window.editorConfig = (holderId, placeholder, isRtl, initialData) => {
         if (typeof AnyButton !== 'undefined') tools.button = { ...serverTools.button, class: AnyButton };
         else if (typeof Button !== 'undefined') tools.button = { ...serverTools.button, class: Button };
     }
-
-    if (typeof AlignmentBlockTune !== 'undefined') {
-        tools.alignment = {
-            class: AlignmentBlockTune,
-            config: {
-                default: "left",
-                blocks: {
-                    header: 'left',
-                    list: 'left'
-                }
-            },
-        };
-    }
     
-    if (typeof ColorPlugin !== 'undefined') {
-        tools.textColor = {
-            class: ColorPlugin,
-            config: {
-                colorCollections: ['#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
-                defaultColor: '#8B5CF6',
-                type: 'text',
-                customPicker: true
-            }
-        };
-    }
+    // Add our custom emoji inline tool
+    tools.emoji = { class: EmojiInlineTool };
 
-    let config = {
-        holder: holderId,
-        placeholder: placeholder,
-        i18n: { direction: isRtl ? 'rtl' : 'ltr' },
-        tools: tools,
-        tunes: typeof AlignmentBlockTune !== 'undefined' ? ['alignment'] : []
-    };
+    let config = { holder: holderId, placeholder: placeholder, i18n: { direction: isRtl ? "rtl" : "ltr" }, tools: tools };
     
     if (initialData && initialData.blocks && initialData.blocks.length > 0) {
         config.data = initialData;
@@ -155,3 +179,4 @@ window.syncEditors = async function(e) {
         alert('An error occurred while preparing post data.');
     }
 };
+

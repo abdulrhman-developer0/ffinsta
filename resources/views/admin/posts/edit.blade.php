@@ -114,15 +114,6 @@
                                     <span class="text-lg">🇸🇦</span> العربية
                                 </button>
                             </div>
-                            
-                            <div class="relative" x-data="{ emojiOpen: false }">
-                                <button type="button" @click="emojiOpen = !emojiOpen" class="btn-secondary px-4 py-2 rounded-xl font-bold shadow-sm flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
-                                    😀 {{ __('Emojis') }}
-                                </button>
-                                <div x-show="emojiOpen" @click.away="emojiOpen = false" class="absolute right-0 rtl:left-0 rtl:right-auto mt-2 z-50 shadow-xl rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                                    <emoji-picker @emoji-click="document.execCommand('insertText', false, $event.detail.unicode); emojiOpen = false;"></emoji-picker>
-                                </div>
-                            </div>
                         </div>
                     
                     <!-- English Content -->

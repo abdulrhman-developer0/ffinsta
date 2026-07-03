@@ -11,8 +11,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/underline@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/editorjs-button@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/editorjs-text-alignment-blocktune@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/editorjs-text-color-plugin@2.0.4/dist/bundle.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1"></script>
 <style>
     /* Editor.js Custom Theme Styling */
