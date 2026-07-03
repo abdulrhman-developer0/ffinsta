@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-drag-drop"></script>
+</head>
+<body>
+    <script>
+        const allKeys = Object.keys(window).filter(k => /list/i.test(k) || /drag/i.test(k));
+        document.body.innerHTML += '<br>Possible keys: ' + allKeys.join(', ');
+    </script>
+</body>
+</html>

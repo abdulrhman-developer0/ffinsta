@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+</head>
+<body>
+    <script>
+        const knownGlobals = ['Header', 'List', 'Quote', 'Embed', 'Delimiter', 'ImageTool', 'EditorjsList'];
+        let found = [];
+        knownGlobals.forEach(g => {
+            if (typeof window[g] !== 'undefined') found.push(g);
+        });
+        document.body.innerHTML = 'Found globals: ' + found.join(', ');
+        // List all global keys that look like editorjs classes
+        const allKeys = Object.keys(window).filter(k => /editorjs/i.test(k) || /list/i.test(k) || /quote/i.test(k));
+        document.body.innerHTML += '<br>Possible keys: ' + allKeys.join(', ');
+    </script>
+</body>
+</html>

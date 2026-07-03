@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+</head>
+<body>
+    <div id="editor_en"></div>
+    <div id="editor_ar" style="display: none;"></div>
+    
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('GLOBAL ERROR:', e.message);
+            document.body.innerHTML += '<div>GLOBAL ERROR: ' + e.message + '</div>';
+        });
+
+        const editorConfig = (holderId, placeholder, isRtl, initialData) => {
+            let config = {
+                holder: holderId,
+                placeholder: placeholder,
+                i18n: { direction: isRtl ? 'rtl' : 'ltr' },
+                tools: {
+                    header: {
+                        class: Header,
+                        inlineToolbar: true,
+                        config: { placeholder: 'Enter a header', levels: [2, 3, 4], defaultLevel: 2 }
+                    },
+                    list: {
+                        class: List,
+                        inlineToolbar: true,
+                    },
+                    quote: {
+                        class: Quote,
+                        inlineToolbar: true,
+                    },
+                    delimiter: {
+                        class: Delimiter,
+                    },
+                    embed: {
+                        class: Embed,
+                    },
+                    image: {
+                        class: ImageTool,
+                    }
+                }
+            };
+            if (initialData && initialData.blocks && initialData.blocks.length > 0) {
+                config.data = initialData;
+            }
+            return config;
+        };
+
+        try {
+            const editorEn = new EditorJS(editorConfig('editor_en', 'Let\'s write an awesome story...', false, null));
+            console.log('Editor EN init success');
+            
+            const editorAr = new EditorJS(editorConfig('editor_ar', 'Arabic', true, null));
+            console.log('Editor AR init success');
+            
+            document.body.innerHTML += '<div>Editor init finished!</div>';
+        } catch (e) {
+            console.error('CATCH ERROR:', e);
+            document.body.innerHTML += '<div>CATCH ERROR: ' + e.toString() + '</div>';
+        }
+    </script>
+</body>
+</html>

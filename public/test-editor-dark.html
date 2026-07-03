@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="dark">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <style>
+        body { background: #000; padding: 50px; }
+    </style>
+</head>
+<body>
+    <div id="editor"></div>
+    <script>
+        const editor = new EditorJS({
+            holder: 'editor',
+            tools: { header: Header }
+        });
+        
+        setTimeout(() => {
+            const plusBtn = document.querySelector('.ce-toolbar__plus');
+            if(plusBtn) plusBtn.click();
+            
+            setTimeout(() => {
+                // Find any element with high z-index or absolute position that might be the popup
+                const popups = document.querySelectorAll('.ce-popover, .ce-toolbox, .tc-popover');
+                let classes = [];
+                popups.forEach(p => classes.push(p.className));
+                document.body.innerHTML += '<div id="result" style="color:red; z-index:9999; position:absolute; top:0;">POPUPS: ' + classes.join(' | ') + '</div>';
+            }, 500);
+        }, 1000);
+    </script>
+</body>
+</html>
