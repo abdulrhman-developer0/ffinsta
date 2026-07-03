@@ -9,7 +9,7 @@ use App\Services\PostRenderService;
 
 class BlogController extends Controller
 {
-    public function index(Request $request, $slug = null, PostRenderService $renderService)
+    public function index(Request $request, PostRenderService $renderService, $slug = null)
     {
         $query = Post::where('is_active', true)->orderBy('id', 'desc');
         $selectedHashtag = null;
@@ -43,7 +43,7 @@ class BlogController extends Controller
         return view('blog.index', compact('posts', 'hashtags', 'selectedHashtag'));
     }
 
-    public function show($slug, PostRenderService $renderService)
+    public function show(PostRenderService $renderService, $slug)
     {
         $post = Post::where('is_active', true)
             ->where(function($q) use ($slug) {
