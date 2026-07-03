@@ -281,6 +281,12 @@
         .codex-editor { height: 100%; min-height: 400px; }
         .codex-editor__redactor { padding-bottom: 300px !important; }
         .ce-header { font-weight: 800; color: inherit; }
+        h1.ce-header { font-size: 2.25em; line-height: 1.2; margin-top: 1.5em; margin-bottom: 0.5em; }
+        h2.ce-header { font-size: 1.5em; line-height: 1.3; margin-top: 1.5em; margin-bottom: 0.5em; }
+        h3.ce-header { font-size: 1.25em; line-height: 1.4; margin-top: 1.5em; margin-bottom: 0.5em; }
+        h4.ce-header { font-size: 1.125em; line-height: 1.5; margin-top: 1.5em; margin-bottom: 0.5em; }
+        h5.ce-header { font-size: 1em; line-height: 1.5; margin-top: 1.5em; margin-bottom: 0.5em; }
+        h6.ce-header { font-size: 0.875em; line-height: 1.5; margin-top: 1.5em; margin-bottom: 0.5em; }
         .ce-paragraph { line-height: 1.8; color: inherit; }
         
         /* Lists */

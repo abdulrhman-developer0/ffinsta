@@ -32,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             '/payment/callback',
+            '/deploy/webhook',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

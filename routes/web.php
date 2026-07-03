@@ -95,4 +95,7 @@ Route::get('/cron/run-queue', function (\Illuminate\Http\Request $request) {
     return "Queue worker executed successfully.";
 });
 
+// GitHub Deployment Webhook
+Route::post('/deploy/webhook', [\App\Http\Controllers\DeployController::class, 'deploy']);
+
 require __DIR__.'/auth.php';
