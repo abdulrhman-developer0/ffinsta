@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CAjvLcRb.css",
+    "file": "assets/app-cf5s_KUe.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -15,7 +15,7 @@
     "isEntry": true
   },
   "resources/js/editor-setup.js": {
-    "file": "assets/editor-setup-F7MloqE6.js",
+    "file": "assets/editor-setup-VOwBFb3k.js",
     "name": "editor-setup",
     "src": "resources/js/editor-setup.js",
     "isEntry": true
