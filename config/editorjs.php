@@ -11,13 +11,20 @@ return [
     |
     */
     'tools' => [
-        'header' => [
+        'heading1' => [
             'inlineToolbar' => true,
-            'config' => [
-                'placeholder' => 'Enter a heading',
-                'levels' => [2, 3, 4, 5, 6],
-                'defaultLevel' => 2,
-            ]
+        ],
+        'heading2' => [
+            'inlineToolbar' => true,
+        ],
+        'heading3' => [
+            'inlineToolbar' => true,
+        ],
+        'heading4' => [
+            'inlineToolbar' => true,
+        ],
+        'heading5' => [
+            'inlineToolbar' => true,
         ],
         'quote' => [
             'inlineToolbar' => true,
@@ -34,9 +41,6 @@ return [
             ]
         ],
         'list' => [
-            'inlineToolbar' => true,
-        ],
-        'nestedList' => [
             'inlineToolbar' => true,
         ],
         'checklist' => [

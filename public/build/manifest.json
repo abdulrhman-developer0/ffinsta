@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-cf5s_KUe.css",
+    "file": "assets/app-5aT-XKtV.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -15,7 +15,7 @@
     "isEntry": true
   },
   "resources/js/react/editor-mount.jsx": {
-    "file": "assets/editor-mount-aNNEVyBk.js",
+    "file": "assets/editor-mount-BbvcHFer.js",
     "name": "editor-mount",
     "src": "resources/js/react/editor-mount.jsx",
     "isEntry": true

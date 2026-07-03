@@ -105,6 +105,15 @@ class PostRenderService
         
         $html = '';
         foreach ($contentData['blocks'] as $block) {
+            $alignClass = '';
+            if (isset($block['tunes']['alignment']['alignment'])) {
+                $align = $block['tunes']['alignment']['alignment'];
+                if (in_array($align, ['left', 'center', 'right', 'justify'])) {
+                    $alignClass = "text-{$align}";
+                }
+            }
+            
+            $blockHtml = '';
             switch ($block['type']) {
                 case 'header':
                 case 'heading1':
@@ -117,38 +126,38 @@ class PostRenderService
                         $levelNum = (int)str_replace('heading', '', $block['type']);
                         $level = $levelNum > 0 ? $levelNum + 1 : 2;
                     }
-                    $html .= "<h{$level}>" . ($block['data']['text'] ?? '') . "</h{$level}>";
+                    $blockHtml .= "<h{$level}>" . ($block['data']['text'] ?? '') . "</h{$level}>";
                     break;
                 case 'paragraph':
-                    $html .= "<p>" . ($block['data']['text'] ?? '') . "</p>";
+                    $blockHtml .= "<p>" . ($block['data']['text'] ?? '') . "</p>";
                     break;
                 case 'list':
                     $style = $block['data']['style'] ?? 'unordered';
                     $tag = ($style === 'ordered') ? 'ol' : 'ul';
-                    $html .= "<{$tag}>";
+                    $blockHtml .= "<{$tag}>";
                     foreach ($block['data']['items'] ?? [] as $item) {
                         if (is_array($item) && isset($item['content'])) {
-                            $html .= "<li>" . $item['content'] . "</li>";
+                            $blockHtml .= "<li>" . $item['content'] . "</li>";
                         } elseif (is_string($item)) {
-                            $html .= "<li>{$item}</li>";
+                            $blockHtml .= "<li>{$item}</li>";
                         }
                     }
-                    $html .= "</{$tag}>";
+                    $blockHtml .= "</{$tag}>";
                     break;
                 case 'checklist':
-                    $html .= "<div class='checklist my-6'>";
+                    $blockHtml .= "<div class='checklist my-6'>";
                     foreach ($block['data']['items'] ?? [] as $item) {
                         $checked = !empty($item['checked']) ? 'checked' : '';
                         $textClass = $checked ? 'line-through text-muted' : 'text-primary';
-                        $html .= "<div class='flex items-start gap-3 mb-2'>";
-                        $html .= "<input type='checkbox' disabled {$checked} class='mt-1.5 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500'>";
-                        $html .= "<span class='{$textClass}'>{$item['text']}</span>";
-                        $html .= "</div>";
+                        $blockHtml .= "<div class='flex items-start gap-3 mb-2'>";
+                        $blockHtml .= "<input type='checkbox' disabled {$checked} class='mt-1.5 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500'>";
+                        $blockHtml .= "<span class='{$textClass}'>{$item['text']}</span>";
+                        $blockHtml .= "</div>";
                     }
-                    $html .= "</div>";
+                    $blockHtml .= "</div>";
                     break;
                 case 'quote':
-                    $html .= "<blockquote><p>" . ($block['data']['text'] ?? '') . "</p><cite>" . ($block['data']['caption'] ?? '') . "</cite></blockquote>";
+                    $blockHtml .= "<blockquote><p>" . ($block['data']['text'] ?? '') . "</p><cite>" . ($block['data']['caption'] ?? '') . "</cite></blockquote>";
                     break;
                 case 'image':
                     $url = $block['data']['file']['url'] ?? '';
@@ -158,38 +167,44 @@ class PostRenderService
                     $stretched = !empty($block['data']['stretched']) ? 'w-full' : 'max-w-full rounded-xl shadow-lg mx-auto';
                     
                     if ($url) {
-                        $html .= "<figure class='my-8 {$withBackground}'>";
-                        $html .= "<img src='{$url}' alt='{$caption}' class='{$stretched} {$withBorder}'>";
+                        $blockHtml .= "<figure class='my-8 {$withBackground}'>";
+                        $blockHtml .= "<img src='{$url}' alt='{$caption}' class='{$stretched} {$withBorder}'>";
                         if ($caption) {
-                            $html .= "<figcaption class='text-center text-sm text-muted mt-2'>{$caption}</figcaption>";
+                            $blockHtml .= "<figcaption class='text-center text-sm text-muted mt-2'>{$caption}</figcaption>";
                         }
-                        $html .= "</figure>";
+                        $blockHtml .= "</figure>";
                     }
                     break;
                 case 'embed':
                     $embedUrl = $block['data']['embed'] ?? '';
                     $caption = $block['data']['caption'] ?? '';
                     if ($embedUrl) {
-                        $html .= "<div class='my-8'>";
-                        $html .= "<div class='relative overflow-hidden rounded-xl shadow-lg' style='padding-top: 56.25%;'>";
-                        $html .= "<iframe src='{$embedUrl}' class='absolute inset-0 w-full h-full' frameborder='0' allowfullscreen></iframe>";
-                        $html .= "</div>";
+                        $blockHtml .= "<div class='my-8'>";
+                        $blockHtml .= "<div class='relative overflow-hidden rounded-xl shadow-lg' style='padding-top: 56.25%;'>";
+                        $blockHtml .= "<iframe src='{$embedUrl}' class='absolute inset-0 w-full h-full' frameborder='0' allowfullscreen></iframe>";
+                        $blockHtml .= "</div>";
                         if ($caption) {
-                            $html .= "<p class='text-center text-sm text-muted mt-2'>{$caption}</p>";
+                            $blockHtml .= "<p class='text-center text-sm text-muted mt-2'>{$caption}</p>";
                         }
-                        $html .= "</div>";
+                        $blockHtml .= "</div>";
                     }
                     break;
                 case 'delimiter':
-                    $html .= "<hr class='my-12 border-t-2 border-slate-200 dark:border-slate-700 w-24 mx-auto rounded-full'>";
+                    $blockHtml .= "<hr class='my-12 border-t-2 border-slate-200 dark:border-slate-700 w-24 mx-auto rounded-full'>";
                     break;
                 case 'button':
                     $link = $block['data']['link'] ?? '#';
                     $text = $block['data']['text'] ?? 'Click Here';
-                    $html .= "<div class='my-8 text-center'>";
-                    $html .= "<a href='{$link}' target='_blank' class='btn-primary inline-flex items-center gap-2 text-lg px-8 py-3 rounded-full shadow-glow font-bold'>{$text}</a>";
-                    $html .= "</div>";
+                    $blockHtml .= "<div class='my-8 " . ($alignClass ?: 'text-center') . "'>";
+                    $blockHtml .= "<a href='{$link}' target='_blank' class='btn-primary inline-flex items-center gap-2 text-lg px-8 py-3 rounded-full shadow-glow font-bold'>{$text}</a>";
+                    $blockHtml .= "</div>";
                     break;
+            }
+            
+            if ($alignClass && $block['type'] !== 'button') {
+                $html .= "<div class='{$alignClass} w-full'>{$blockHtml}</div>";
+            } else {
+                $html .= $blockHtml;
             }
         }
         return $html;
