@@ -261,8 +261,7 @@
         window.editorEn = new EditorJS(editorConfig('editor_en', @json(__('Let\'s write an awesome story...')), false, dataEn));
         window.editorAr = new EditorJS(editorConfig('editor_ar', @json(__('Let\'s write an awesome story...')), true, dataAr));
 
-        window.editorEn.isReady.then(() => { new DragDrop(window.editorEn); });
-        window.editorAr.isReady.then(() => { new DragDrop(window.editorAr); });
+
     </script>
 </x-admin-layout>
 

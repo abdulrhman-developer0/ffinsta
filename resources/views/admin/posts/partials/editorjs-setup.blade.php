@@ -11,7 +11,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/underline@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/editorjs-button@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/editorjs-drag-drop"></script>
 
 <style>
     /* Editor.js Custom Theme Styling */
