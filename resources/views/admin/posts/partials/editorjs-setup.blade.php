@@ -11,7 +11,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/underline@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/editorjs-button@latest"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/editorjs-text-alignment-blocktune@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/editorjs-text-color-plugin@2.0.4/dist/bundle.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1"></script>
 <style>
     /* Editor.js Custom Theme Styling */
     .ce-block__content, .ce-toolbar__content { max-width: calc(100% - 80px) !important; }
@@ -206,6 +208,11 @@
         --color-line-gray: #334155 !important;
         --color-active-icon: #8b5cf6 !important;
     }
+
+    /* Hide Undo/Redo icons that appear as circles/half-circles */
+    .ce-toolbar__actions > :not(.ce-toolbar__plus):not(.ce-toolbar__settings-btn) { display: none !important; }
+    .ce-undo, .ce-redo, .cdx-undo, .cdx-redo { display: none !important; }
+
 </style>
 
 <script>
@@ -214,3 +221,4 @@
     window.EditorJsCsrfToken = '{{ csrf_token() }}';
 </script>
 @vite(['resources/js/editor-setup.js'])
+

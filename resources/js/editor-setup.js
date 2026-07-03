@@ -15,14 +15,41 @@ window.imageViewer = function() {
     }
 }
 
+// Custom independent Headings extending the base Header tool
+if (typeof Header !== 'undefined') {
+    window.Heading1 = class extends Header {
+        static get toolbox() { return { ...super.toolbox, title: 'Heading 1', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
+    };
+    window.Heading2 = class extends Header {
+        static get toolbox() { return { ...super.toolbox, title: 'Heading 2', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
+    };
+    window.Heading3 = class extends Header {
+        static get toolbox() { return { ...super.toolbox, title: 'Heading 3', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
+    };
+    window.Heading4 = class extends Header {
+        static get toolbox() { return { ...super.toolbox, title: 'Heading 4', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
+    };
+    window.Heading5 = class extends Header {
+        static get toolbox() { return { ...super.toolbox, title: 'Heading 5', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
+    };
+    window.Heading6 = class extends Header {
+        static get toolbox() { return { ...super.toolbox, title: 'Heading 6', icon: '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8 11h8v2H8v-2z" fill="currentColor"/></svg>' }; }
+    };
+}
+
 window.editorConfig = (holderId, placeholder, isRtl, initialData) => {
     // Read base tool config from global window variable
     let serverTools = window.EditorJsConfig || {};
     let tools = {};
 
     // Map server config to actual JS classes loaded via CDN
-    if (serverTools.header && typeof Header !== 'undefined') {
-        tools.header = { ...serverTools.header, class: Header };
+    if (typeof Header !== 'undefined') {
+        if (serverTools.heading1) tools.heading1 = { ...serverTools.heading1, class: window.Heading1 };
+        if (serverTools.heading2) tools.heading2 = { ...serverTools.heading2, class: window.Heading2 };
+        if (serverTools.heading3) tools.heading3 = { ...serverTools.heading3, class: window.Heading3 };
+        if (serverTools.heading4) tools.heading4 = { ...serverTools.heading4, class: window.Heading4 };
+        if (serverTools.heading5) tools.heading5 = { ...serverTools.heading5, class: window.Heading5 };
+        if (serverTools.heading6) tools.heading6 = { ...serverTools.heading6, class: window.Heading6 };
     }
     if (serverTools.quote && typeof Quote !== 'undefined') {
         tools.quote = { ...serverTools.quote, class: Quote };
@@ -58,11 +85,37 @@ window.editorConfig = (holderId, placeholder, isRtl, initialData) => {
         else if (typeof Button !== 'undefined') tools.button = { ...serverTools.button, class: Button };
     }
 
+    if (typeof AlignmentBlockTune !== 'undefined') {
+        tools.alignment = {
+            class: AlignmentBlockTune,
+            config: {
+                default: "left",
+                blocks: {
+                    header: 'left',
+                    list: 'left'
+                }
+            },
+        };
+    }
+    
+    if (typeof ColorPlugin !== 'undefined') {
+        tools.textColor = {
+            class: ColorPlugin,
+            config: {
+                colorCollections: ['#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
+                defaultColor: '#8B5CF6',
+                type: 'text',
+                customPicker: true
+            }
+        };
+    }
+
     let config = {
         holder: holderId,
         placeholder: placeholder,
         i18n: { direction: isRtl ? 'rtl' : 'ltr' },
-        tools: tools
+        tools: tools,
+        tunes: typeof AlignmentBlockTune !== 'undefined' ? ['alignment'] : []
     };
     
     if (initialData && initialData.blocks && initialData.blocks.length > 0) {

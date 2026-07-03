@@ -90,19 +90,30 @@
                     </div>
 
                     <div class="form-group" wire:ignore x-data="{ contentLang: 'en' }">
-                        <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner border border-slate-200 dark:border-slate-700 w-fit mb-4">
-                            <button type="button" @click="
-                                if(contentLang === 'ar') window.syncEditorLanguage('ar', 'en');
-                                contentLang = 'en';
-                            " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': contentLang === 'en', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': contentLang !== 'en'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
-                                <span class="text-sm font-black text-slate-400">EN</span> English
-                            </button>
-                            <button type="button" @click="
-                                if(contentLang === 'en') window.syncEditorLanguage('en', 'ar');
-                                contentLang = 'ar';
-                            " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': contentLang === 'ar', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': contentLang !== 'ar'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
-                                <span class="text-sm font-black text-slate-400">AR</span> العربية
-                            </button>
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner border border-slate-200 dark:border-slate-700 w-fit">
+                                <button type="button" @click="
+                                    if(contentLang === 'ar') window.syncEditorLanguage('ar', 'en');
+                                    contentLang = 'en';
+                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': contentLang === 'en', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': contentLang !== 'en'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
+                                    <span class="text-sm font-black text-slate-400">EN</span> English
+                                </button>
+                                <button type="button" @click="
+                                    if(contentLang === 'en') window.syncEditorLanguage('en', 'ar');
+                                    contentLang = 'ar';
+                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': contentLang === 'ar', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': contentLang !== 'ar'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
+                                    <span class="text-sm font-black text-slate-400">AR</span> العربية
+                                </button>
+                            </div>
+                            
+                            <div class="relative" x-data="{ emojiOpen: false }">
+                                <button type="button" @click="emojiOpen = !emojiOpen" class="btn-secondary px-4 py-2 rounded-xl font-bold shadow-sm flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
+                                    😀 {{ __('Emojis') }}
+                                </button>
+                                <div x-show="emojiOpen" @click.away="emojiOpen = false" class="absolute right-0 rtl:left-0 rtl:right-auto mt-2 z-50 shadow-xl rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                                    <emoji-picker @emoji-click="document.execCommand('insertText', false, $event.detail.unicode); emojiOpen = false;"></emoji-picker>
+                                </div>
+                            </div>
                         </div>
                     
                     <!-- English Content -->
