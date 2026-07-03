@@ -14,10 +14,10 @@
     "src": "resources/js/app.js",
     "isEntry": true
   },
-  "resources/js/editor-setup.js": {
-    "file": "assets/editor-setup-VOwBFb3k.js",
-    "name": "editor-setup",
-    "src": "resources/js/editor-setup.js",
+  "resources/js/react/editor-mount.jsx": {
+    "file": "assets/editor-mount-aNNEVyBk.js",
+    "name": "editor-mount",
+    "src": "resources/js/react/editor-mount.jsx",
     "isEntry": true
   }
 }

@@ -9,7 +9,15 @@
         </div>
     </x-slot>
 
-    @include('admin.posts.partials.editorjs-setup')
+    <script>
+        window.EditorJsConfig = @json(config('editorjs.tools', []));
+        window.EditorJsUploadRoute = '{{ route("admin.posts.upload-media") }}';
+        window.EditorJsCsrfToken = '{{ csrf_token() }}';
+        window.EditorJsEnPlaceholder = '{{ __("Start writing in English...") }}';
+        window.EditorJsArPlaceholder = '{{ __("ابدأ الكتابة بالعربية...") }}';
+    </script>
+    @viteReactRefresh
+    @vite('resources/js/react/editor-mount.jsx')
 
 
 
@@ -89,38 +97,14 @@
                         <p class="text-sm text-muted mb-4">{{ __('Type / to bring up the block menu like Notion') }}</p>
                     </div>
 
-                    <div class="form-group" wire:ignore x-data="{ contentLang: 'en' }">
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner border border-slate-200 dark:border-slate-700 w-fit">
-                                <button type="button" @click="
-                                    if(contentLang === 'ar') window.syncEditorLanguage('ar', 'en');
-                                    contentLang = 'en';
-                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': contentLang === 'en', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': contentLang !== 'en'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
-                                    <span class="text-sm font-black text-slate-400">EN</span> English
-                                </button>
-                                <button type="button" @click="
-                                    if(contentLang === 'en') window.syncEditorLanguage('en', 'ar');
-                                    contentLang = 'ar';
-                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': contentLang === 'ar', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': contentLang !== 'ar'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
-                                    <span class="text-sm font-black text-slate-400">AR</span> العربية
-                                </button>
-                            </div>
-                        </div>
-                    
-                    <!-- English Content -->
-                    <div x-show="contentLang === 'en'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm">
-                        <div id="editor_en" class="text-slate-800 dark:text-slate-200 p-6 sm:p-10 min-h-[500px]"></div>
-                    </div>
-                    <input type="hidden" name="content[en]" id="content_en" value="{{ old('content.en') }}">
-                    
-                    <!-- Arabic Content -->
-                    <div x-show="contentLang === 'ar'" style="display: none;" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm">
-                        <div id="editor_ar" class="text-slate-800 dark:text-slate-200 p-6 sm:p-10 min-h-[500px]" dir="rtl"></div>
-                    </div>
-                    <input type="hidden" name="content[ar]" id="content_ar" value="{{ old('content.ar') }}">
-                    
-                    @error('content.en') <p class="form-error">{{ $message }}</p> @enderror
-                    @error('content.ar') <p class="form-error">{{ $message }}</p> @enderror
+                    <div class="form-group" wire:ignore>
+                        <div 
+                            id="react-editor-mount" 
+                            data-en="{{ old('content.en') ? (is_string(old('content.en')) ? old('content.en') : json_encode(old('content.en'))) : '{}' }}"
+                            data-ar="{{ old('content.ar') ? (is_string(old('content.ar')) ? old('content.ar') : json_encode(old('content.ar'))) : '{}' }}"
+                        ></div>
+                        @error('content.en') <p class="form-error">{{ $message }}</p> @enderror
+                        @error('content.ar') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     </div>
                 </div>
@@ -246,22 +230,4 @@
     </div>
     
 
-    <script type="module">
-        let dataEn = null;
-        let dataAr = null;
-        try { 
-            let parsed = {!! json_encode(old('content.en')) !!}; 
-            if(parsed) dataEn = JSON.parse(parsed);
-        } catch(e) {}
-        
-        try { 
-            let parsed = {!! json_encode(old('content.ar')) !!}; 
-            if(parsed) dataAr = JSON.parse(parsed);
-        } catch(e) {}
-
-        window.editorEn = new EditorJS(editorConfig('editor_en', @json(__('Let\'s write an awesome story...')), false, dataEn));
-        window.editorAr = new EditorJS(editorConfig('editor_ar', @json(__('Let\'s write an awesome story...')), true, dataAr));
-
-
-    </script>
 </x-admin-layout>

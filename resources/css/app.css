@@ -1,3 +1,4 @@
+@import './editorjs-theme.css';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -384,4 +385,6 @@ body {
                       radial-gradient(at 50% 0%, rgba(30, 27, 75, 0.5) 0px, transparent 55%),
                       radial-gradient(at 100% 0%, rgba(15, 23, 42, 0.8) 0px, transparent 55%);
 }
+
+
 
