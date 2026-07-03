@@ -37,6 +37,11 @@ class PostRenderService
                 switch ($block['type']) {
                     case 'paragraph':
                     case 'header':
+                    case 'heading1':
+                    case 'heading2':
+                    case 'heading3':
+                    case 'heading4':
+                    case 'heading5':
                         $localizedBlock['data']['text'] = $ext($data['text'] ?? '');
                         break;
                     case 'quote':
@@ -75,7 +80,7 @@ class PostRenderService
             $plainText = strip_tags($contentData);
         } elseif (is_array($contentData) && isset($contentData['blocks'])) {
             foreach ($contentData['blocks'] as $block) {
-                if (in_array($block['type'], ['paragraph', 'header', 'quote'])) {
+                if (in_array($block['type'], ['paragraph', 'header', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'quote'])) {
                     $plainText .= strip_tags($block['data']['text'] ?? '') . ' ';
                 }
             }
@@ -102,7 +107,16 @@ class PostRenderService
         foreach ($contentData['blocks'] as $block) {
             switch ($block['type']) {
                 case 'header':
-                    $level = $block['data']['level'] ?? 2;
+                case 'heading1':
+                case 'heading2':
+                case 'heading3':
+                case 'heading4':
+                case 'heading5':
+                    $level = $block['data']['level'] ?? null;
+                    if (!$level) {
+                        $levelNum = (int)str_replace('heading', '', $block['type']);
+                        $level = $levelNum > 0 ? $levelNum + 1 : 2;
+                    }
                     $html .= "<h{$level}>" . ($block['data']['text'] ?? '') . "</h{$level}>";
                     break;
                 case 'paragraph':
