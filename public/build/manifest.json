@@ -13,5 +13,11 @@
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
+  },
+  "resources/js/editor-setup.js": {
+    "file": "assets/editor-setup-VOwBFb3k.js",
+    "name": "editor-setup",
+    "src": "resources/js/editor-setup.js",
+    "isEntry": true
   }
 }

@@ -11,6 +11,8 @@
 
     @include('admin.posts.partials.editorjs-setup')
 
+
+
     <div class="card-premium-glow rounded-3xl p-6 sm:p-8 bg-surface border border-slate-200 dark:border-slate-800 shadow-xl">
         <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data" id="postForm" x-data="{ isSubmitting: false }" @submit="syncEditors(event); isSubmitting = true;">
             @csrf
@@ -241,20 +243,8 @@
         </form>
     </div>
     
-    <script>
-        function imageViewer() {
-            return {
-                imageUrl: '',
-                fileChosen(event) {
-                    if (event.target.files.length === 0) return;
-                    let file = event.target.files[0];
-                    let reader = new FileReader();
-                    reader.onload = (e) => this.imageUrl = e.target.result;
-                    reader.readAsDataURL(file);
-                }
-            }
-        }
 
+    <script type="module">
         let dataEn = null;
         let dataAr = null;
         try { 
