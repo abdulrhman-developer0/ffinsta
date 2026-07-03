@@ -2,16 +2,6 @@
  * Editor.js Setup & Initialization
  */
 
-window.imageViewer = function() {
-    return {
-        imageUrl: '',
-        fileChosen(event) {
-            if (event.target.files.length === 0) return;
-            let file = event.target.files[0];
-            let reader = new FileReader();
-            reader.onload = (e) => this.imageUrl = e.target.result;
-            reader.readAsDataURL(file);
-        }
     }
 }
 window.editorConfig = (holderId, placeholder, isRtl, initialData) => {
@@ -94,5 +84,6 @@ window.syncEditors = async function(e) {
         alert('An error occurred while preparing post data.');
     }
 };
+
 
 
