@@ -26,7 +26,7 @@
                         <a href="{{ route('admin.posts.edit', $post) }}" class="absolute inset-0 z-0 rounded-2xl"></a>
                         
                         <!-- Cover Image -->
-                        <div class="w-full aspect-[16/10] flex-shrink-0 rounded-xl overflow-hidden shadow-sm relative group-hover:shadow-md transition-shadow z-10 pointer-events-none">
+                        <div class="w-full aspect-video flex-shrink-0 rounded-xl overflow-hidden shadow-sm relative group-hover:shadow-md transition-shadow z-10 pointer-events-none">
                             <img src="{{ $post->cover_image_url ?: asset('img/placeholder.png') }}" alt="{{ $post->title['en'] ?? '' }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
                             

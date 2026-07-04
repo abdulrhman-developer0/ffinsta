@@ -37,7 +37,7 @@
                             <!-- Clickable Overlay -->
                             <a href="{{ route('blog.show', $post->localized_slug) }}" class="absolute inset-0 z-0 rounded-3xl"></a>
                             
-                            <div class="w-full aspect-[16/10] rounded-2xl overflow-hidden flex-shrink-0 relative z-10 pointer-events-none">
+                            <div class="w-full aspect-video rounded-2xl overflow-hidden flex-shrink-0 relative z-10 pointer-events-none">
                                 @if($post->cover_image_url)
                                     <img src="{{ $post->cover_image_url }}" alt="{{ $post->localized_title }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
                                 @else
