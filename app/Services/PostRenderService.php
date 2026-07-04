@@ -5,96 +5,58 @@ namespace App\Services;
 class PostRenderService
 {
     /**
-     * Splits unified JSON content back into a standard EditorJS structure for a specific locale.
-     * This is used for the Edit UI and internal rendering.
+     * Splits unified JSON content back into a standard structure for a specific locale.
+     * With TipTap, the DB might store `{ "en": { type: "doc", ... }, "ar": { type: "doc", ... } }`.
      */
     public function getLocalizedContent($unifiedContent, $locale)
     {
-        if (!is_array($unifiedContent) || empty($unifiedContent['blocks'])) {
-            // Fallback for old data where content was ['en' => [...], 'ar' => [...]]
-            if (isset($unifiedContent['en']) || isset($unifiedContent['ar'])) {
-                return $unifiedContent[$locale] ?? null;
-            }
+        if (!is_array($unifiedContent)) {
             return $unifiedContent;
         }
 
-        $localized = $unifiedContent;
-        $localized['blocks'] = [];
-
-        foreach ($unifiedContent['blocks'] as $block) {
-            $localizedBlock = $block;
-            
-            // Helper to extract localized string
-            $ext = function($field) use ($locale) {
-                if (is_array($field)) {
-                    return $field[$locale] ?? ($field['en'] ?? '');
-                }
-                return $field;
-            };
-
-            if (isset($block['data'])) {
-                $data = $block['data'];
-                switch ($block['type']) {
-                    case 'paragraph':
-                    case 'header':
-                    case 'heading1':
-                    case 'heading2':
-                    case 'heading3':
-                    case 'heading4':
-                    case 'heading5':
-                        $localizedBlock['data']['text'] = $ext($data['text'] ?? '');
-                        break;
-                    case 'quote':
-                        $localizedBlock['data']['text'] = $ext($data['text'] ?? '');
-                        $localizedBlock['data']['caption'] = $ext($data['caption'] ?? '');
-                        break;
-                    case 'list':
-                    case 'checklist':
-                        $localizedBlock['data']['items'] = $ext($data['items'] ?? []);
-                        break;
-                    case 'image':
-                    case 'embed':
-                        $localizedBlock['data']['caption'] = $ext($data['caption'] ?? '');
-                        break;
-                    case 'button':
-                        $localizedBlock['data']['text'] = $ext($data['text'] ?? '');
-                        $localizedBlock['data']['link'] = $ext($data['link'] ?? '');
-                        break;
-                }
-            }
-            
-            if (isset($block['tunes']['alignment']['alignment'])) {
-                $localizedBlock['tunes']['alignment']['alignment'] = $ext($block['tunes']['alignment']['alignment']);
-            }
-            
-            $localized['blocks'][] = $localizedBlock;
+        // Check if it's already localized (e.g. ['en' => [...], 'ar' => [...]])
+        if (isset($unifiedContent['en']) || isset($unifiedContent['ar'])) {
+            return $unifiedContent[$locale] ?? null;
         }
-        
-        return $localized;
+
+        // If it's old EditorJS blocks or something else without en/ar wrapper
+        return $unifiedContent;
     }
 
     /**
-     * Extracts plain text from the unified EditorJS content for meta description or lists.
+     * Extracts plain text from TipTap JSON content.
      */
     public function getPlainText($unifiedContent, $locale)
     {
         $contentData = $this->getLocalizedContent($unifiedContent, $locale);
-        $plainText = '';
         
         if (is_string($contentData)) {
-            $plainText = strip_tags($contentData);
-        } elseif (is_array($contentData) && isset($contentData['blocks'])) {
-            foreach ($contentData['blocks'] as $block) {
-                if (in_array($block['type'], ['paragraph', 'header', 'heading1', 'heading2', 'heading3', 'heading4', 'heading5', 'quote'])) {
-                    $plainText .= strip_tags($block['data']['text'] ?? '') . ' ';
-                }
+            return strip_tags($contentData);
+        }
+
+        return $this->extractTextFromNode($contentData);
+    }
+
+    private function extractTextFromNode($node)
+    {
+        if (!is_array($node)) return '';
+        
+        $text = '';
+        if (isset($node['type']) && $node['type'] === 'text' && isset($node['text'])) {
+            $text .= $node['text'];
+        }
+        
+        if (isset($node['content']) && is_array($node['content'])) {
+            foreach ($node['content'] as $child) {
+                $text .= $this->extractTextFromNode($child) . ' ';
             }
         }
-        return trim($plainText);
+        
+        return trim($text);
     }
 
     /**
-     * Renders EditorJS content into HTML.
+     * Renders TipTap JSON content into HTML.
      */
     public function renderHtml($unifiedContent, $locale)
     {
@@ -104,144 +66,114 @@ class PostRenderService
             return $contentData; // Fallback for old HTML
         }
         
-        if (!is_array($contentData) || !isset($contentData['blocks'])) {
+        if (!is_array($contentData) || !isset($contentData['type']) || $contentData['type'] !== 'doc') {
+            return ''; // Invalid format or empty
+        }
+
+        return $this->renderNode($contentData);
+    }
+
+    private function renderNode($node)
+    {
+        if (!is_array($node) || !isset($node['type'])) {
             return '';
         }
+
+        $type = $node['type'];
+        $contentHtml = '';
         
-        $html = '';
-        foreach ($contentData['blocks'] as $block) {
-            $alignClass = '';
-            if (isset($block['tunes']['alignment']['alignment'])) {
-                $align = $block['tunes']['alignment']['alignment'];
-                if (in_array($align, ['left', 'center', 'right', 'justify'])) {
-                    $alignClass = "text-{$align}";
-                }
+        if (isset($node['content']) && is_array($node['content'])) {
+            foreach ($node['content'] as $child) {
+                $contentHtml .= $this->renderNode($child);
             }
-            
-            $blockHtml = '';
-            switch ($block['type']) {
-                case 'header':
-                case 'heading1':
-                case 'heading2':
-                case 'heading3':
-                case 'heading4':
-                case 'heading5':
-                    $level = $block['data']['level'] ?? null;
-                    if (!$level) {
-                        $levelNum = (int)str_replace('heading', '', $block['type']);
-                        $level = $levelNum > 0 ? $levelNum + 1 : 2;
-                    }
-                    $blockHtml .= "<h{$level} class='{$alignClass}'>" . ($block['data']['text'] ?? '') . "</h{$level}>";
-                    break;
-                case 'paragraph':
-                    $blockHtml .= "<p class='{$alignClass}'>" . ($block['data']['text'] ?? '') . "</p>";
-                    break;
-                case 'list':
-                    $style = $block['data']['style'] ?? 'unordered';
-                    
-                    if ($style === 'checklist') {
-                        $blockHtml .= "<div class='checklist my-8 space-y-3 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50'>";
-                        foreach ($block['data']['items'] ?? [] as $item) {
-                            $checked = !empty($item['meta']['checked']);
-                            $text = $item['content'] ?? '';
-                            
-                            $textClass = $checked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium';
-                            
-                            $blockHtml .= "<div class='flex items-start gap-4'>";
-                            if ($checked) {
-                                $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center border border-brand-500/20'>";
-                                $blockHtml .= "<svg class='w-4 h-4 text-brand-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M5 13l4 4L19 7'></path></svg>";
-                                $blockHtml .= "</div>";
-                            } else {
-                                $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'></div>";
-                            }
-                            $blockHtml .= "<span class='{$textClass} text-lg pt-0.5 leading-relaxed'>{$text}</span>";
-                            $blockHtml .= "</div>";
-                        }
-                        $blockHtml .= "</div>";
-                    } else {
-                        $tag = ($style === 'ordered') ? 'ol' : 'ul';
-                        $blockHtml .= "<{$tag} class='{$alignClass}'>";
-                        foreach ($block['data']['items'] ?? [] as $item) {
-                            if (is_array($item) && isset($item['content'])) {
-                                $blockHtml .= "<li>" . $item['content'] . "</li>";
-                            } elseif (is_string($item)) {
-                                $blockHtml .= "<li>{$item}</li>";
-                            }
-                        }
-                        $blockHtml .= "</{$tag}>";
-                    }
-                    break;
-                case 'checklist':
-                    $blockHtml .= "<div class='checklist my-8 space-y-3 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50'>";
-                    foreach ($block['data']['items'] ?? [] as $item) {
-                        $checked = !empty($item['checked']) ? 'checked' : '';
-                        $textClass = $checked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium';
-                        $iconColor = $checked ? 'text-brand-500' : 'text-slate-300 dark:text-slate-600';
-                        
-                        $blockHtml .= "<div class='flex items-start gap-4'>";
-                        
-                        if ($checked) {
-                            $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center border border-brand-500/20'>";
-                            $blockHtml .= "<svg class='w-4 h-4 text-brand-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M5 13l4 4L19 7'></path></svg>";
-                            $blockHtml .= "</div>";
-                        } else {
-                            $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'></div>";
-                        }
-                        
-                        $blockHtml .= "<span class='{$textClass} text-lg pt-0.5 leading-relaxed'>{$item['text']}</span>";
-                        $blockHtml .= "</div>";
-                    }
-                    $blockHtml .= "</div>";
-                    break;
-                case 'quote':
-                    $blockHtml .= "<blockquote class='{$alignClass}'><p>" . ($block['data']['text'] ?? '') . "</p><cite>" . ($block['data']['caption'] ?? '') . "</cite></blockquote>";
-                    break;
-                case 'image':
-                    $url = $block['data']['file']['url'] ?? '';
-                    $caption = $block['data']['caption'] ?? '';
-                    $withBorder = !empty($block['data']['withBorder']) ? 'border border-slate-200 dark:border-slate-700' : '';
-                    $withBackground = !empty($block['data']['withBackground']) ? 'bg-slate-100 dark:bg-slate-800 p-4 rounded-xl' : '';
-                    $stretched = !empty($block['data']['stretched']) ? 'w-full' : 'max-w-full rounded-xl shadow-lg mx-auto';
-                    
-                    if ($url) {
-                        $blockHtml .= "<figure class='my-8 {$withBackground}'>";
-                        $blockHtml .= "<img src='{$url}' alt='{$caption}' class='{$stretched} {$withBorder}'>";
-                        if ($caption) {
-                            $blockHtml .= "<figcaption class='text-center text-sm text-muted mt-2'>{$caption}</figcaption>";
-                        }
-                        $blockHtml .= "</figure>";
-                    }
-                    break;
-                case 'embed':
-                    $embedUrl = $block['data']['embed'] ?? '';
-                    $caption = $block['data']['caption'] ?? '';
-                    if ($embedUrl) {
-                        $blockHtml .= "<div class='my-8'>";
-                        $blockHtml .= "<div class='relative overflow-hidden rounded-xl shadow-lg' style='padding-top: 56.25%;'>";
-                        $blockHtml .= "<iframe src='{$embedUrl}' class='absolute inset-0 w-full h-full' frameborder='0' allowfullscreen></iframe>";
-                        $blockHtml .= "</div>";
-                        if ($caption) {
-                            $blockHtml .= "<p class='text-center text-sm text-muted mt-2'>{$caption}</p>";
-                        }
-                        $blockHtml .= "</div>";
-                    }
-                    break;
-                case 'delimiter':
-                    $blockHtml .= "<hr class='my-12 border-t-2 border-slate-200 dark:border-slate-700 w-24 mx-auto rounded-full'>";
-                    break;
-                case 'button':
-                    $link = $block['data']['link'] ?? '#';
-                    $text = $block['data']['text'] ?? 'Click Here';
-                    $blockHtml .= "<div class='my-8 " . ($alignClass ?: 'text-center') . "'>";
-                    $blockHtml .= "<a href='{$link}' target='_blank' class='btn-primary !text-white !no-underline inline-flex items-center gap-2 text-lg px-8 py-3 rounded-full shadow-glow font-bold'>{$text}</a>";
-                    $blockHtml .= "</div>";
-                    break;
-            }
-            
-            
-            $html .= $blockHtml;
         }
-        return $html;
+
+        $attrs = $node['attrs'] ?? [];
+        $textAlign = $attrs['textAlign'] ?? null;
+        $class = '';
+        if ($textAlign && in_array($textAlign, ['left', 'center', 'right', 'justify'])) {
+            $class = "text-{$textAlign}";
+        }
+        $classAttr = $class ? " class=\"{$class}\"" : '';
+
+        switch ($type) {
+            case 'doc':
+                return $contentHtml;
+            case 'paragraph':
+                if (empty(trim(strip_tags($contentHtml))) && empty($node['content'])) {
+                    return "<p{$classAttr}><br></p>";
+                }
+                return "<p{$classAttr}>{$contentHtml}</p>";
+            case 'heading':
+                $level = $attrs['level'] ?? 2;
+                return "<h{$level}{$classAttr}>{$contentHtml}</h{$level}>";
+            case 'blockquote':
+                return "<blockquote{$classAttr}>{$contentHtml}</blockquote>";
+            case 'bulletList':
+                return "<ul{$classAttr}>{$contentHtml}</ul>";
+            case 'orderedList':
+                return "<ol{$classAttr}>{$contentHtml}</ol>";
+            case 'listItem':
+                return "<li>{$contentHtml}</li>";
+            case 'image':
+                $src = $attrs['src'] ?? '';
+                $alt = $attrs['alt'] ?? '';
+                $title = $attrs['title'] ?? '';
+                $imgClass = "max-w-full h-auto rounded-xl shadow-lg my-6 mx-auto";
+                if ($class === 'text-left') $imgClass .= " ml-0 mr-auto";
+                elseif ($class === 'text-right') $imgClass .= " ml-auto mr-0";
+                
+                if ($src) {
+                    return "<figure class=\"{$class}\"><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\" class=\"{$imgClass}\"></figure>";
+                }
+                return '';
+            case 'text':
+                $text = htmlspecialchars($node['text'] ?? '');
+                if (isset($node['marks']) && is_array($node['marks'])) {
+                    foreach ($node['marks'] as $mark) {
+                        $text = $this->applyMark($text, $mark);
+                    }
+                }
+                return $text;
+            case 'hardBreak':
+                return "<br>";
+            case 'horizontalRule':
+                return "<hr class=\"my-8 border-t-2 border-slate-200 dark:border-slate-700\">";
+            default:
+                return $contentHtml; // Unhandled node, just render its content
+        }
+    }
+
+    private function applyMark($text, $mark)
+    {
+        if (!is_array($mark) || !isset($mark['type'])) {
+            return $text;
+        }
+
+        $type = $mark['type'];
+        $attrs = $mark['attrs'] ?? [];
+
+        switch ($type) {
+            case 'bold':
+                return "<strong>{$text}</strong>";
+            case 'italic':
+                return "<em>{$text}</em>";
+            case 'underline':
+                return "<u>{$text}</u>";
+            case 'strike':
+                return "<s>{$text}</s>";
+            case 'link':
+                $href = $attrs['href'] ?? '#';
+                $target = $attrs['target'] ?? '_blank';
+                return "<a href=\"{$href}\" target=\"{$target}\" rel=\"noopener noreferrer\" class=\"text-brand-600 hover:text-brand-700 underline\">{$text}</a>";
+            case 'textStyle':
+                $color = $attrs['color'] ?? null;
+                if ($color) {
+                    return "<span style=\"color: {$color}\">{$text}</span>";
+                }
+                return $text;
+            default:
+                return $text;
+        }
     }
 }

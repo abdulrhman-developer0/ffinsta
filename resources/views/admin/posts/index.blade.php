@@ -3,14 +3,18 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight">{{ __('Posts') }}</h2>
-            <a href="{{ route('admin.posts.create') }}" class="btn-primary shadow-glow px-3 py-2 sm:px-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rtl-flip sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                <span class="hidden sm:inline">{{ __('New Post') }}</span>
-            </a>
         </div>
     </x-slot>
 
     <div x-data="{ deleteModalOpen: false, postToDelete: null, deletePostUrl: '' }">
+        <!-- Add Post Button (Mobile Block) -->
+        <div class="mb-6 flex justify-end">
+            <a href="{{ route('admin.posts.create') }}" class="btn-primary shadow-glow px-4 py-3 sm:py-2.5 w-full sm:w-auto flex items-center justify-center gap-2 text-base sm:text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rtl-flip" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                <span>{{ __('New Post') }}</span>
+            </a>
+        </div>
+        
         @if($posts->isEmpty())
             <div class="card p-12 text-center text-muted border-dashed border-2 border-slate-200 dark:border-slate-700 bg-transparent shadow-none">
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 mb-4">
