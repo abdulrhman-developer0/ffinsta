@@ -2,9 +2,10 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import PostEditor from './PostEditor';
 
-document.addEventListener('DOMContentLoaded', () => {
+const mountEditor = () => {
     const mountPoint = document.getElementById('react-editor-mount');
-    if (mountPoint) {
+    if (mountPoint && !mountPoint.dataset.mounted) {
+        mountPoint.dataset.mounted = 'true';
         let initialDataEn = {};
         let initialDataAr = {};
         
@@ -24,4 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
             />
         );
     }
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountEditor);
+} else {
+    mountEditor();
+}
