@@ -1,11 +1,11 @@
 <x-admin-layout>
-    <x-slot name="title">{{ __('Manage Blog Posts') }}</x-slot>
+    <x-slot name="title">{{ __('Posts') }}</x-slot>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">{{ __('Manage Blog Posts') }}</h2>
-            <a href="{{ route('admin.posts.create') }}" class="btn-primary shadow-glow">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 rtl-flip" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                {{ __('Add New Post') }}
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight">{{ __('Posts') }}</h2>
+            <a href="{{ route('admin.posts.create') }}" class="btn-primary shadow-glow px-3 py-2 sm:px-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rtl-flip sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                <span class="hidden sm:inline">{{ __('New Post') }}</span>
             </a>
         </div>
     </x-slot>
@@ -19,14 +19,14 @@
                 <p class="text-lg font-medium">{{ __('No posts found. Create one to get started.') }}</p>
             </div>
         @else
-            <div class="grid grid-cols-1 gap-6">
+            <div class="grid grid-cols-1 gap-4 sm:gap-6">
                 @foreach($posts as $post)
-                    <div class="card p-4 sm:p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center hover:shadow-xl hover:-translate-y-1 hover:border-brand-300 dark:hover:border-brand-600 transition-all duration-300 group relative">
+                    <div class="card p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center hover:shadow-xl hover:-translate-y-1 hover:border-brand-300 dark:hover:border-brand-600 transition-all duration-300 group relative">
                         <!-- Clickable overlay -->
                         <a href="{{ route('admin.posts.edit', $post) }}" class="absolute inset-0 z-0 rounded-2xl"></a>
                         
                         <!-- Cover Image -->
-                        <div class="w-full sm:w-48 h-32 flex-shrink-0 rounded-2xl overflow-hidden shadow-sm relative group-hover:shadow-md transition-shadow z-10 pointer-events-none">
+                        <div class="w-full sm:w-48 h-48 sm:h-32 flex-shrink-0 rounded-2xl overflow-hidden shadow-sm relative group-hover:shadow-md transition-shadow z-10 pointer-events-none">
                             <img src="{{ $post->cover_image_url ?: asset('img/placeholder.png') }}" alt="{{ $post->title['en'] ?? '' }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
                         </div>
@@ -57,7 +57,7 @@
                         </div>
 
                         <!-- Actions Dropdown -->
-                        <div class="relative ml-auto sm:ml-0 mt-4 sm:mt-0 z-20" x-data="{ open: false, placement: 'bottom' }">
+                        <div class="absolute top-4 right-4 rtl:left-4 rtl:right-auto sm:relative sm:top-auto sm:right-auto sm:rtl:left-auto sm:ml-auto z-20" x-data="{ open: false, placement: 'bottom' }">
                             <button @click="open = !open; 
                                 if(open) {
                                     $nextTick(() => {

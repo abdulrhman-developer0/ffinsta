@@ -1,10 +1,10 @@
 <x-admin-layout>
-    <x-slot name="title">{{ __('Create Blog Post') }}</x-slot>
+    <x-slot name="title">{{ __('New Post') }}</x-slot>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-black text-primary">{{ __('Create Blog Post') }}</h2>
-            <a href="{{ route('admin.posts.index') }}" class="btn-secondary px-5 py-2 rounded-xl font-bold shadow-sm">
-                {{ __('Back to Posts') }}
+            <h2 class="text-xl sm:text-2xl font-black text-primary">{{ __('New Post') }}</h2>
+            <a href="{{ route('admin.posts.index') }}" class="btn-secondary px-4 py-2 sm:px-5 rounded-xl font-bold shadow-sm text-sm sm:text-base">
+                {{ __('Back') }}
             </a>
         </div>
     </x-slot>
@@ -21,14 +21,14 @@
 
 
 
-    <div class="card-premium-glow rounded-3xl p-6 sm:p-8 bg-surface border border-slate-200 dark:border-slate-800 shadow-xl">
+    <div class="card-premium-glow rounded-3xl p-4 sm:p-6 lg:p-8 bg-surface border border-slate-200 dark:border-slate-800 shadow-xl">
         <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data" id="postForm" x-data="{ isSubmitting: false }" @submit="syncEditors(event); isSubmitting = true;">
             @csrf
             
             <div class="space-y-8 max-w-5xl mx-auto">
                 
                 <!-- Basic Info Section -->
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-6 sm:p-8 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-6">
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-6 lg:p-8 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-4 sm:space-y-6">
                     <h3 class="font-bold text-xl text-primary flex items-center gap-2 mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         {{ __('Basic Information') }}
@@ -36,15 +36,15 @@
                     
                     <!-- Title Field -->
                     <div class="form-group" x-data="{ titleLang: 'en' }">
-                        <div class="flex justify-between items-center mb-2">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-3 sm:mb-2">
                             <label class="form-label text-base m-0">{{ __('Title') }}</label>
-                            <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner border border-slate-200 dark:border-slate-700 w-fit">
+                            <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner border border-slate-200 dark:border-slate-700 w-full sm:w-fit">
                                 <button type="button" @click="
                                     if(titleLang === 'ar' && !document.getElementById('title_en').value) {
                                         document.getElementById('title_en').value = document.getElementById('title_ar').value;
                                     }
                                     titleLang = 'en'
-                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': titleLang === 'en', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': titleLang !== 'en'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
+                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': titleLang === 'en', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': titleLang !== 'en'}" class="w-1/2 sm:w-auto px-4 sm:px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center justify-center sm:justify-start gap-2">
                                     <span class="text-sm font-black text-slate-400">EN</span> English
                                 </button>
                                 <button type="button" @click="
@@ -52,7 +52,7 @@
                                         document.getElementById('title_ar').value = document.getElementById('title_en').value;
                                     }
                                     titleLang = 'ar'
-                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': titleLang === 'ar', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': titleLang !== 'ar'}" class="px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
+                                " :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': titleLang === 'ar', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': titleLang !== 'ar'}" class="w-1/2 sm:w-auto px-4 sm:px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center justify-center sm:justify-start gap-2">
                                     <span class="text-sm font-black text-slate-400">AR</span> العربية
                                 </button>
                             </div>
@@ -88,7 +88,7 @@
                 </div>
                 
                 <!-- Content Section -->
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-6 sm:p-8 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-6">
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-6 lg:p-8 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-4 sm:space-y-6">
                     <div>
                         <h3 class="font-bold text-xl text-primary flex items-center gap-2 mb-1">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -112,7 +112,7 @@
                 <!-- Settings & Publish Section -->
                 <div class="flex flex-col gap-6">
                     <!-- Modern Hashtags Input -->
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm">
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm">
                         <h3 class="font-bold text-lg mb-4 text-primary flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></svg>
                             {{ __('Tags') }}
@@ -203,7 +203,7 @@
                     </div>
 
                     <!-- Publish Box -->
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm flex flex-col justify-center">
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm flex flex-col justify-center">
                         <h3 class="font-bold text-lg mb-4 text-primary flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
                             {{ __('Publish') }}

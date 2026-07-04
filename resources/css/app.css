@@ -214,9 +214,7 @@ body {
         color: var(--brand);
         @apply font-semibold;
     }
-    [dir="rtl"] .sidebar-link {
-        @apply flex-row-reverse;
-    }
+
 
     /* ---- Alerts / Toasts ---- */
     .alert {
