@@ -1,7 +1,13 @@
 /* Editor.js Custom Theme Styling */
 .ce-block__content,
 .ce-toolbar__content {
-    max-width: calc(100% - 80px) !important;
+    max-width: 100% !important;
+}
+@media (min-width: 768px) {
+    .ce-block__content,
+    .ce-toolbar__content {
+        max-width: calc(100% - 80px) !important;
+    }
 }
 .codex-editor {
     height: 100%;
@@ -139,7 +145,34 @@ h6.ce-header {
 .ce-inline-tool:hover {
     background-color: #f1f5f9 !important;
     color: #8b5cf6 !important;
-} /* Left Toolbar Buttons (+ and drag) */
+}
+
+/* Mobile-specific Popover & Toolbar adjustments */
+@media (max-width: 650px) {
+    .ce-popover {
+        max-width: 90vw !important;
+    }
+    .ce-inline-toolbar {
+        max-width: 90vw !important;
+        overflow-x: auto !important;
+        scrollbar-width: none !important;
+    }
+    .ce-inline-toolbar::-webkit-scrollbar {
+        display: none !important;
+    }
+    .ce-inline-toolbar__buttons {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+    .ce-toolbar__actions {
+        /* Make sure toolbar actions don't overflow on small screens */
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+}
+
+/* Left Toolbar Buttons (+ and drag) */
 .ce-toolbar__plus,
 .ce-toolbar__settings-btn {
     border-radius: 8px !important;
