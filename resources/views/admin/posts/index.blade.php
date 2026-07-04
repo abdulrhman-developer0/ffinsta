@@ -88,6 +88,9 @@
                             <h3 class="text-lg font-extrabold text-slate-900 dark:text-white line-clamp-2 leading-snug" title="{{ $post->localized_title }}">
                                 {{ $post->localized_title ?: '---' }}
                             </h3>
+                            <p class="text-slate-600 dark:text-slate-400 mt-2 text-sm line-clamp-2 leading-relaxed" title="{{ $post->rendered_plain_text }}">
+                                {{ Str::limit($post->rendered_plain_text, 150) }}
+                            </p>
                         </div>
                     </div>
                 @endforeach

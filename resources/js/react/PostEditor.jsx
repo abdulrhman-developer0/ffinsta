@@ -178,11 +178,14 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
 
     // Parse existing JSON string to object if necessary
     const parseInitial = (data) => {
-        if (!data) return {};
+        if (!data || data === '{}' || data === '[]') return '';
         try {
-            return typeof data === 'string' ? JSON.parse(data) : data;
+            const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+            // If it's an empty object, TipTap prefers empty string
+            if (Object.keys(parsed).length === 0) return '';
+            return parsed;
         } catch (e) {
-            return {};
+            return '';
         }
     };
 
@@ -254,10 +257,10 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
         const inputEn = ensureInput('content_en', 'content[en]');
         const inputAr = ensureInput('content_ar', 'content[ar]');
 
-        if (editorEn && Object.keys(parsedEn).length > 0) {
+        if (editorEn && parsedEn) {
              inputEn.value = JSON.stringify(editorEn.getJSON());
         }
-        if (editorAr && Object.keys(parsedAr).length > 0) {
+        if (editorAr && parsedAr) {
              inputAr.value = JSON.stringify(editorAr.getJSON());
         }
     }, [editorEn, editorAr]);
