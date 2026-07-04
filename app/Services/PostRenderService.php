@@ -62,6 +62,11 @@ class PostRenderService
                         break;
                 }
             }
+            
+            if (isset($block['tunes']['alignment']['alignment'])) {
+                $localizedBlock['tunes']['alignment']['alignment'] = $ext($block['tunes']['alignment']['alignment']);
+            }
+            
             $localized['blocks'][] = $localizedBlock;
         }
         
@@ -126,38 +131,71 @@ class PostRenderService
                         $levelNum = (int)str_replace('heading', '', $block['type']);
                         $level = $levelNum > 0 ? $levelNum + 1 : 2;
                     }
-                    $blockHtml .= "<h{$level}>" . ($block['data']['text'] ?? '') . "</h{$level}>";
+                    $blockHtml .= "<h{$level} class='{$alignClass}'>" . ($block['data']['text'] ?? '') . "</h{$level}>";
                     break;
                 case 'paragraph':
-                    $blockHtml .= "<p>" . ($block['data']['text'] ?? '') . "</p>";
+                    $blockHtml .= "<p class='{$alignClass}'>" . ($block['data']['text'] ?? '') . "</p>";
                     break;
                 case 'list':
                     $style = $block['data']['style'] ?? 'unordered';
-                    $tag = ($style === 'ordered') ? 'ol' : 'ul';
-                    $blockHtml .= "<{$tag}>";
-                    foreach ($block['data']['items'] ?? [] as $item) {
-                        if (is_array($item) && isset($item['content'])) {
-                            $blockHtml .= "<li>" . $item['content'] . "</li>";
-                        } elseif (is_string($item)) {
-                            $blockHtml .= "<li>{$item}</li>";
+                    
+                    if ($style === 'checklist') {
+                        $blockHtml .= "<div class='checklist my-8 space-y-3 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50'>";
+                        foreach ($block['data']['items'] ?? [] as $item) {
+                            $checked = !empty($item['meta']['checked']);
+                            $text = $item['content'] ?? '';
+                            
+                            $textClass = $checked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium';
+                            
+                            $blockHtml .= "<div class='flex items-start gap-4'>";
+                            if ($checked) {
+                                $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center border border-brand-500/20'>";
+                                $blockHtml .= "<svg class='w-4 h-4 text-brand-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M5 13l4 4L19 7'></path></svg>";
+                                $blockHtml .= "</div>";
+                            } else {
+                                $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'></div>";
+                            }
+                            $blockHtml .= "<span class='{$textClass} text-lg pt-0.5 leading-relaxed'>{$text}</span>";
+                            $blockHtml .= "</div>";
                         }
+                        $blockHtml .= "</div>";
+                    } else {
+                        $tag = ($style === 'ordered') ? 'ol' : 'ul';
+                        $blockHtml .= "<{$tag} class='{$alignClass}'>";
+                        foreach ($block['data']['items'] ?? [] as $item) {
+                            if (is_array($item) && isset($item['content'])) {
+                                $blockHtml .= "<li>" . $item['content'] . "</li>";
+                            } elseif (is_string($item)) {
+                                $blockHtml .= "<li>{$item}</li>";
+                            }
+                        }
+                        $blockHtml .= "</{$tag}>";
                     }
-                    $blockHtml .= "</{$tag}>";
                     break;
                 case 'checklist':
-                    $blockHtml .= "<div class='checklist my-6'>";
+                    $blockHtml .= "<div class='checklist my-8 space-y-3 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50'>";
                     foreach ($block['data']['items'] ?? [] as $item) {
                         $checked = !empty($item['checked']) ? 'checked' : '';
-                        $textClass = $checked ? 'line-through text-muted' : 'text-primary';
-                        $blockHtml .= "<div class='flex items-start gap-3 mb-2'>";
-                        $blockHtml .= "<input type='checkbox' disabled {$checked} class='mt-1.5 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500'>";
-                        $blockHtml .= "<span class='{$textClass}'>{$item['text']}</span>";
+                        $textClass = $checked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium';
+                        $iconColor = $checked ? 'text-brand-500' : 'text-slate-300 dark:text-slate-600';
+                        
+                        $blockHtml .= "<div class='flex items-start gap-4'>";
+                        
+                        if ($checked) {
+                            $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-500/10 flex items-center justify-center border border-brand-500/20'>";
+                            $blockHtml .= "<svg class='w-4 h-4 text-brand-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M5 13l4 4L19 7'></path></svg>";
+                            $blockHtml .= "</div>";
+                        } else {
+                            $blockHtml .= "<div class='mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'></div>";
+                        }
+                        
+                        $blockHtml .= "<span class='{$textClass} text-lg pt-0.5 leading-relaxed'>{$item['text']}</span>";
                         $blockHtml .= "</div>";
                     }
                     $blockHtml .= "</div>";
                     break;
                 case 'quote':
-                    $blockHtml .= "<blockquote><p>" . ($block['data']['text'] ?? '') . "</p><cite>" . ($block['data']['caption'] ?? '') . "</cite></blockquote>";
+                    $blockHtml .= "<blockquote class='{$alignClass}'><p>" . ($block['data']['text'] ?? '') . "</p><cite>" . ($block['data']['caption'] ?? '') . "</cite></blockquote>";
                     break;
                 case 'image':
                     $url = $block['data']['file']['url'] ?? '';
@@ -196,16 +234,13 @@ class PostRenderService
                     $link = $block['data']['link'] ?? '#';
                     $text = $block['data']['text'] ?? 'Click Here';
                     $blockHtml .= "<div class='my-8 " . ($alignClass ?: 'text-center') . "'>";
-                    $blockHtml .= "<a href='{$link}' target='_blank' class='btn-primary inline-flex items-center gap-2 text-lg px-8 py-3 rounded-full shadow-glow font-bold'>{$text}</a>";
+                    $blockHtml .= "<a href='{$link}' target='_blank' class='btn-primary !text-white !no-underline inline-flex items-center gap-2 text-lg px-8 py-3 rounded-full shadow-glow font-bold'>{$text}</a>";
                     $blockHtml .= "</div>";
                     break;
             }
             
-            if ($alignClass && $block['type'] !== 'button') {
-                $html .= "<div class='{$alignClass} w-full'>{$blockHtml}</div>";
-            } else {
-                $html .= $blockHtml;
-            }
+            
+            $html .= $blockHtml;
         }
         return $html;
     }

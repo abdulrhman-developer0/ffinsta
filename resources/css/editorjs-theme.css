@@ -269,13 +269,26 @@ html.dark,
     --color-gray-border: #334155 !important;
     --color-line-gray: #334155 !important;
     --color-active-icon: #8b5cf6 !important;
-} /* Hide Undo/Redo icons that appear as circles/half-circles */
-.ce-toolbar__actions > :not(.ce-toolbar__plus):not(.ce-toolbar__settings-btn) {
-    display: none !important;
 }
 .ce-undo,
 .ce-redo,
 .cdx-undo,
 .cdx-redo {
+    display: none !important;
+}
+
+/* Custom Selection Background for Blocks (Ctrl+/) */
+.ce-block--selected .ce-block__content {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+    border-radius: 8px;
+}
+.dark .ce-block--selected .ce-block__content {
+    background-color: rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Hide the 'Convert to' option in the block tunes menu */
+.ce-popover-item[data-item-name="convert-to"],
+.ce-conversion-toolbar,
+.ce-conversion-tool {
     display: none !important;
 }

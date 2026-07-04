@@ -62,6 +62,7 @@
                         <div x-show="titleLang === 'ar'" style="display: none;">
                             <input type="text" name="title[ar]" id="title_ar" value="{{ old('title.ar', $post->title['ar'] ?? '') }}" class="form-input text-lg font-semibold py-3 rounded-xl border-slate-200 dark:border-slate-600 focus:ring-brand-500" placeholder="{{ __('Enter post title here...') }}" dir="rtl">
                         </div>
+                        <input type="hidden" name="content_last_activity" id="content_last_activity" value="">
                         @error('title.en') <p class="form-error">{{ $message }}</p> @enderror
                         @error('title.ar') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
@@ -239,4 +240,47 @@
     </div>
     
 </x-admin-layout>
+<script>
+    function imageViewer() {
+        return {
+            imageUrl: '',
+            fileChosen(event) {
+                this.fileToDataUrl(event, src => this.imageUrl = src)
+            },
+            fileToDataUrl(event, callback) {
+                if (!event.target.files.length) return
+                let file = event.target.files[0],
+                    reader = new FileReader()
+                reader.readAsDataURL(file)
+                reader.onload = e => callback(e.target.result)
+            }
+        }
+    }
+
+    // Global Error Catcher for debugging EditorJS
+    window.addEventListener('error', function(e) {
+        let div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.top = '10px';
+        div.style.right = '10px';
+        div.style.background = 'red';
+        div.style.color = 'white';
+        div.style.padding = '20px';
+        div.style.zIndex = '999999';
+        div.innerText = 'Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno;
+        document.body.appendChild(div);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+        let div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.top = '50px';
+        div.style.right = '10px';
+        div.style.background = 'orange';
+        div.style.color = 'white';
+        div.style.padding = '20px';
+        div.style.zIndex = '999999';
+        div.innerText = 'Promise Rejection: ' + (e.reason && e.reason.stack ? e.reason.stack : e.reason);
+        document.body.appendChild(div);
+    });
+</script>
 

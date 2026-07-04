@@ -21,43 +21,43 @@
         @else
             <div class="grid grid-cols-1 gap-6">
                 @foreach($posts as $post)
-                    <div class="card p-4 sm:p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center hover:border-brand-500/50 transition-colors group">
+                    <div class="card p-4 sm:p-6 flex flex-col sm:flex-row gap-6 items-start sm:items-center hover:shadow-xl hover:-translate-y-1 hover:border-brand-300 dark:hover:border-brand-600 transition-all duration-300 group relative">
+                        <!-- Clickable overlay -->
+                        <a href="{{ route('admin.posts.edit', $post) }}" class="absolute inset-0 z-0 rounded-2xl"></a>
+                        
                         <!-- Cover Image -->
-                        <div class="w-full sm:w-48 h-32 flex-shrink-0 rounded-2xl overflow-hidden shadow-sm relative group-hover:shadow-md transition-shadow">
-                            <img src="{{ $post->cover_image_url ?: asset('img/placeholder.png') }}" alt="{{ $post->title['en'] ?? '' }}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                        <div class="w-full sm:w-48 h-32 flex-shrink-0 rounded-2xl overflow-hidden shadow-sm relative group-hover:shadow-md transition-shadow z-10 pointer-events-none">
+                            <img src="{{ $post->cover_image_url ?: asset('img/placeholder.png') }}" alt="{{ $post->title['en'] ?? '' }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
                         </div>
 
                         <!-- Content Details -->
-                        <div class="flex-1 min-w-0 flex flex-col gap-2">
+                        <div class="flex-1 min-w-0 flex flex-col gap-2 z-10 pointer-events-none">
                             <div class="flex items-center gap-3 flex-wrap">
                                 @if($post->is_active)
-                                    <span class="badge-active">{{ __('Active') }}</span>
+                                    <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">{{ __('Active') }}</span>
                                 @else
-                                    <span class="badge-pending">{{ __('Inactive') }}</span>
+                                    <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">{{ __('Inactive') }}</span>
                                 @endif
-                                <span class="text-xs text-muted flex items-center gap-1 font-medium">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium bg-slate-50 dark:bg-slate-800/50 px-2 py-1 rounded-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                     {{ number_format($post->views) }} {{ __('Views') }}
                                 </span>
-                                <span class="text-xs text-muted flex items-center gap-1 font-medium">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium bg-slate-50 dark:bg-slate-800/50 px-2 py-1 rounded-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                     {{ $post->created_at->format('M d, Y') }}
                                 </span>
                             </div>
                             
-                            <div class="flex flex-col gap-1 mt-1">
-                                <h3 class="text-xl font-bold text-slate-800 dark:text-white truncate" dir="ltr" title="{{ $post->title['en'] ?? '' }}">
-                                    <span class="text-xs text-muted font-normal mr-2">🇬🇧</span>{{ ($post->title['en'] ?? '') ?: '---' }}
-                                </h3>
-                                <h3 class="text-xl font-bold text-slate-800 dark:text-white truncate" dir="rtl" title="{{ $post->title['ar'] ?? '' }}">
-                                    <span class="text-xs text-muted font-normal ml-2">🇸🇦</span>{{ ($post->title['ar'] ?? '') ?: '---' }}
+                            <div class="flex flex-col gap-1.5 mt-2">
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white truncate" title="{{ $post->localized_title }}">
+                                    {{ $post->localized_title ?: '---' }}
                                 </h3>
                             </div>
                         </div>
 
                         <!-- Actions Dropdown -->
-                        <div class="relative ml-auto sm:ml-0 mt-4 sm:mt-0" x-data="{ open: false, placement: 'bottom' }">
+                        <div class="relative ml-auto sm:ml-0 mt-4 sm:mt-0 z-20" x-data="{ open: false, placement: 'bottom' }">
                             <button @click="open = !open; 
                                 if(open) {
                                     $nextTick(() => {
@@ -68,9 +68,9 @@
                                             placement = 'bottom';
                                         }
                                     });
-                                }" @click.outside="open = false" type="button" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                }" @click.outside="open = false" type="button" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/30 dark:hover:text-brand-400 text-slate-500 transition-colors focus:outline-none shadow-sm border border-slate-200 dark:border-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                                 </svg>
                             </button>
                             
@@ -83,15 +83,15 @@
                                  x-transition:leave-start="transform opacity-100 scale-100" 
                                  x-transition:leave-end="transform opacity-0 scale-95" 
                                  :class="placement === 'top' ? 'bottom-full mb-2 origin-bottom-right' : 'top-full mt-2 origin-top-right'"
-                                 class="absolute z-50 w-48 rounded-xl shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-10 rtl:left-0 ltr:right-0 focus:outline-none py-1" 
+                                 class="absolute z-50 w-48 rounded-xl shadow-lg bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-10 rtl:left-0 ltr:right-0 focus:outline-none py-1 border border-slate-100 dark:border-slate-700" 
                                  style="display: none;">
                                 
-                                <a href="{{ route('admin.posts.edit', $post) }}" class="flex items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors w-full text-left">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-3 rtl-flip text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                <a href="{{ route('admin.posts.edit', $post) }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-colors w-full text-left">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-3 rtl-flip text-slate-400 group-hover:text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                     {{ __('Edit') }}
                                 </a>
                                 
-                                <button type="button" @click="open = false; deleteModalOpen = true; postToDelete = '{{ addslashes(($post->title['en'] ?? '') ?: ($post->title['ar'] ?? '')) }}'; deletePostUrl = '{{ route('admin.posts.destroy', $post) }}'" class="flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left">
+                                <button type="button" @click="open = false; deleteModalOpen = true; postToDelete = '{{ addslashes(($post->title['en'] ?? '') ?: ($post->title['ar'] ?? '')) }}'; deletePostUrl = '{{ route('admin.posts.destroy', $post) }}'" class="flex items-center px-4 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors w-full text-left border-t border-slate-100 dark:border-slate-700/50 mt-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                     {{ __('Delete') }}
                                 </button>

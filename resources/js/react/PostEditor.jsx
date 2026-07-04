@@ -4,7 +4,6 @@ import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
 import NestedList from '@editorjs/nested-list';
-import Checklist from '@editorjs/checklist';
 import Quote from '@editorjs/quote';
 import Embed from '@editorjs/embed';
 import Delimiter from '@editorjs/delimiter';
@@ -16,7 +15,7 @@ import 'emoji-picker-element';
 import ColorPlugin from 'editorjs-text-color-plugin';
 import AlignmentBlockTune from 'editorjs-text-alignment-blocktune';
 
-const createHeadingClass = (level, iconHtml, title) => {
+const createHeadingClass = (iconHtml, title) => {
     return class extends Header {
         static get toolbox() {
             return {
@@ -24,29 +23,14 @@ const createHeadingClass = (level, iconHtml, title) => {
                 title: title
             };
         }
-        constructor(args) {
-            super(args);
-            // Force the level
-            this.data = {
-                text: args.data.text || '',
-                level: level
-            };
-            // Override the setter so it can't be changed by the user in settings
-            this.level = level;
-        }
-        
-        // Remove the heading level selection tune from settings!
-        renderSettings() {
-            return document.createElement('div');
-        }
     };
 };
 
-const Heading1 = createHeadingClass(2, '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 1');
-const Heading2 = createHeadingClass(3, '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 2');
-const Heading3 = createHeadingClass(4, '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 3');
-const Heading4 = createHeadingClass(5, '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 4');
-const Heading5 = createHeadingClass(6, '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 5');
+const Heading1 = createHeadingClass('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 1');
+const Heading2 = createHeadingClass('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 2');
+const Heading3 = createHeadingClass('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 3');
+const Heading4 = createHeadingClass('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 4');
+const Heading5 = createHeadingClass('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8m-8 6V6m8 12V6m7 6h-3v6m3-6a3 3 0 100-6 3 3 0 000 6z"/></svg>', 'Heading 5');
 
 class EmojiInlineTool {
     static get isInline() { return true; }
@@ -140,8 +124,22 @@ const buildToolsConfig = (isRtl) => {
         },
     };
     
+    class SafeColorPlugin extends ColorPlugin {
+        constructor(args) {
+            if (!args.config || Object.keys(args.config).length === 0) {
+                args.config = {
+                    colorCollections: ['#1e293b', '#64748b', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e'],
+                    defaultColor: '#1e293b',
+                    type: 'text',
+                    customPicker: true
+                };
+            }
+            super(args);
+        }
+    }
+
     tools.Color = {
-        class: ColorPlugin,
+        class: SafeColorPlugin,
         config: {
            colorCollections: ['#1e293b', '#64748b', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e'],
            defaultColor: '#1e293b',
@@ -150,11 +148,11 @@ const buildToolsConfig = (isRtl) => {
         }
     };
 
-    if (serverTools.heading1) tools.heading1 = { ...serverTools.heading1, class: Heading1, tunes: ['alignment'] };
-    if (serverTools.heading2) tools.heading2 = { ...serverTools.heading2, class: Heading2, tunes: ['alignment'] };
-    if (serverTools.heading3) tools.heading3 = { ...serverTools.heading3, class: Heading3, tunes: ['alignment'] };
-    if (serverTools.heading4) tools.heading4 = { ...serverTools.heading4, class: Heading4, tunes: ['alignment'] };
-    if (serverTools.heading5) tools.heading5 = { ...serverTools.heading5, class: Heading5, tunes: ['alignment'] };
+    if (serverTools.heading1) tools.heading1 = { ...serverTools.heading1, class: Heading1, config: { defaultLevel: 2, levels: [2] }, tunes: ['alignment'] };
+    if (serverTools.heading2) tools.heading2 = { ...serverTools.heading2, class: Heading2, config: { defaultLevel: 3, levels: [3] }, tunes: ['alignment'] };
+    if (serverTools.heading3) tools.heading3 = { ...serverTools.heading3, class: Heading3, config: { defaultLevel: 4, levels: [4] }, tunes: ['alignment'] };
+    if (serverTools.heading4) tools.heading4 = { ...serverTools.heading4, class: Heading4, config: { defaultLevel: 5, levels: [5] }, tunes: ['alignment'] };
+    if (serverTools.heading5) tools.heading5 = { ...serverTools.heading5, class: Heading5, config: { defaultLevel: 6, levels: [6] }, tunes: ['alignment'] };
     
     // Fallback if they still use 'header'
     if (serverTools.header && !serverTools.heading1) tools.header = { ...serverTools.header, class: Header, tunes: ['alignment'] };
@@ -169,7 +167,6 @@ const buildToolsConfig = (isRtl) => {
         tools.image = { ...serverTools.image, class: ImageTool, config: imageConfig };
     }
     if (serverTools.list) tools.list = { ...serverTools.list, class: List };
-    if (serverTools.checklist) tools.checklist = { ...serverTools.checklist, class: Checklist };
     
     tools.paragraph = {
         tunes: ['alignment']
@@ -213,6 +210,12 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
             try {
                 const data = await api.saver.save();
                 inputElement.value = JSON.stringify(data);
+                
+                // Track edit activity
+                let activityInput = document.getElementById('content_last_activity');
+                if (activityInput) {
+                    activityInput.value = Date.now().toString();
+                }
             } catch (e) {
                 console.error('Saving failed: ', e);
             }
@@ -289,7 +292,7 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
                             : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                         }`}
                     >
-                        <span className="text-sm font-black text-slate-400">EN</span> English
+                        <span className="text-sm font-black text-slate-500 dark:text-slate-400">EN</span>
                     </button>
                     <button 
                         type="button" 
@@ -300,7 +303,7 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
                             : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                         }`}
                     >
-                        <span className="text-sm font-black text-slate-400">AR</span> العربية
+                        <span className="text-sm font-black text-slate-500 dark:text-slate-400">AR</span>
                     </button>
                 </div>
             </div>

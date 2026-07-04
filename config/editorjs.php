@@ -51,6 +51,16 @@ return [
         ],
         'button' => [
             'inlineToolbar' => false,
+        ],
+        'image' => [
+            'config' => [
+                'endpoints' => [
+                    'byFile' => '', // Configured in JS
+                ],
+            ]
+        ],
+        'paragraph' => [
+            'inlineToolbar' => true,
         ]
     ]
 ];
