@@ -54,16 +54,11 @@ const MenuBar = ({ editor, isRtl }) => {
     const setLink = () => {
         const previousUrl = editor.getAttributes('link').href
         const url = window.prompt('URL', previousUrl)
-
-        if (url === null) {
-            return
-        }
-
+        if (url === null) return;
         if (url === '') {
             editor.chain().focus().extendMarkRange('link').unsetLink().run()
             return
         }
-
         editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     }
 
@@ -73,8 +68,8 @@ const MenuBar = ({ editor, isRtl }) => {
             onClick={onClick}
             disabled={disabled}
             title={title}
-            className={`p-1.5 rounded-lg transition-colors flex items-center justify-center
-                ${isActive ? 'bg-brand-100 text-brand-600 dark:bg-brand-900/50 dark:text-brand-400' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'}
+            className={`px-2 py-1.5 rounded-sm transition-colors flex items-center justify-center
+                ${isActive ? 'bg-[#444] text-white' : 'text-[#bbb] hover:text-white hover:bg-[#333]'}
                 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}
         >
@@ -82,91 +77,116 @@ const MenuBar = ({ editor, isRtl }) => {
         </button>
     );
 
-    const Divider = () => <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1" />;
-
     return (
-        <div className="flex flex-wrap items-center gap-1 p-2 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 rounded-t-2xl z-10 sticky top-0" dir={isRtl ? 'rtl' : 'ltr'}>
-            <Button onClick={() => editor.chain().focus().toggleBold().run()} disabled={!editor.can().chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold">
-                <Bold size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().toggleItalic().run()} disabled={!editor.can().chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} title="Italic">
-                <Italic size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().toggleUnderline().run()} disabled={!editor.can().chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} title="Underline">
-                <UnderlineIcon size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().toggleStrike().run()} disabled={!editor.can().chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} title="Strikethrough">
-                <Strikethrough size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear Formatting">
-                <RemoveFormatting size={18} />
-            </Button>
-            
-            <Divider />
-            
-            <Button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} title="Heading 1 (H2)">
-                <Heading1 size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} isActive={editor.isActive('heading', { level: 3 })} title="Heading 2 (H3)">
-                <Heading2 size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()} isActive={editor.isActive('heading', { level: 4 })} title="Heading 3 (H4)">
-                <Heading3 size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().setParagraph().run()} isActive={editor.isActive('paragraph')} title="Paragraph">
-                <span className="font-bold px-1 text-sm">P</span>
-            </Button>
-            
-            <Divider />
-            
-            <Button onClick={() => editor.chain().focus().setTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })} title="Align Left">
-                <AlignLeft size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().setTextAlign('center').run()} isActive={editor.isActive({ textAlign: 'center' })} title="Align Center">
-                <AlignCenter size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().setTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })} title="Align Right">
-                <AlignRight size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().setTextAlign('justify').run()} isActive={editor.isActive({ textAlign: 'justify' })} title="Align Justify">
-                <AlignJustify size={18} />
-            </Button>
+        <div className="flex flex-col bg-[#1a1a1a] border border-[#333] rounded-t-lg select-none">
+            {/* Top Toolbar */}
+            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-[#2a2a2a]" dir={isRtl ? 'rtl' : 'ltr'}>
+                
+                {/* Format Clear */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear Formatting">
+                        <RemoveFormatting size={15} />
+                    </Button>
+                </div>
+                
+                {/* Basic Text Formatting */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold">
+                        <Bold size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} title="Italic">
+                        <Italic size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} title="Underline">
+                        <UnderlineIcon size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} title="Strikethrough">
+                        <Strikethrough size={15} />
+                    </Button>
+                </div>
 
-            <Divider />
-            
-            <Button onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title="Bullet List">
-                <List size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title="Ordered List">
-                <ListOrdered size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} title="Blockquote">
-                <Quote size={18} />
-            </Button>
-            
-            <Divider />
-            
-            <Button onClick={addImage} title="Image">
-                <ImageIcon size={18} />
-            </Button>
-            <Button onClick={setLink} isActive={editor.isActive('link')} title="Link">
-                <LinkIcon size={18} />
-            </Button>
-            <Button onClick={() => editor.chain().focus().unsetLink().run()} disabled={!editor.isActive('link')} title="Unlink">
-                <Unlink size={18} />
-            </Button>
-            
-            <Divider />
-            
-            <div className="relative group flex items-center">
-                <Button title="Text Color"><Palette size={18} /></Button>
-                <div className="absolute top-full rtl:right-0 ltr:left-0 mt-1 hidden group-hover:flex flex-wrap w-40 p-2 gap-1 bg-white dark:bg-slate-800 shadow-xl rounded-xl border border-slate-200 dark:border-slate-700">
-                    {['#1e293b', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'].map(color => (
-                        <button key={color} type="button" onClick={() => editor.chain().focus().setColor(color).run()} 
-                                className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform"
-                                style={{ backgroundColor: color }} />
-                    ))}
-                    <button type="button" onClick={() => editor.chain().focus().unsetColor().run()} className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform bg-transparent border-2 border-slate-300 text-xs flex items-center justify-center font-bold">X</button>
+                {/* Headings */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} title="Heading 2">
+                        <Heading2 size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} isActive={editor.isActive('heading', { level: 3 })} title="Heading 3">
+                        <Heading3 size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()} isActive={editor.isActive('heading', { level: 4 })} title="Heading 4">
+                        <Heading4 size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().setParagraph().run()} isActive={editor.isActive('paragraph')} title="Paragraph">
+                        <span className="text-[13px] font-bold leading-none px-0.5">P</span>
+                    </Button>
+                </div>
+
+                {/* Lists */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title="Bullet List">
+                        <List size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title="Ordered List">
+                        <ListOrdered size={15} />
+                    </Button>
+                </div>
+
+                {/* Alignment */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button onClick={() => editor.chain().focus().setTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })} title="Align Left">
+                        <AlignLeft size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().setTextAlign('center').run()} isActive={editor.isActive({ textAlign: 'center' })} title="Align Center">
+                        <AlignCenter size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().setTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })} title="Align Right">
+                        <AlignRight size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().setTextAlign('justify').run()} isActive={editor.isActive({ textAlign: 'justify' })} title="Align Justify">
+                        <AlignJustify size={15} />
+                    </Button>
+                </div>
+
+                {/* Colors */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <div className="relative group flex items-center">
+                        <Button title="Text Color"><Palette size={15} /></Button>
+                        <div className="absolute top-full rtl:right-0 ltr:left-0 mt-1 hidden group-hover:flex flex-wrap w-40 p-2 gap-1 bg-[#222] shadow-xl rounded-md border border-[#444] z-50">
+                            {['#ffffff', '#1e293b', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'].map(color => (
+                                <button key={color} type="button" onClick={() => editor.chain().focus().setColor(color).run()} 
+                                        className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform"
+                                        style={{ backgroundColor: color }} />
+                            ))}
+                            <button type="button" onClick={() => editor.chain().focus().unsetColor().run()} className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform bg-transparent border border-[#555] text-white text-xs flex items-center justify-center font-bold">X</button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Media & Blockquote */}
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button onClick={setLink} isActive={editor.isActive('link')} title="Link">
+                        <LinkIcon size={15} />
+                    </Button>
+                    <Button onClick={addImage} title="Image">
+                        <ImageIcon size={15} />
+                    </Button>
+                    <Button onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} title="Blockquote">
+                        <Quote size={15} />
+                    </Button>
+                </div>
+            </div>
+
+            {/* Bottom Toolbar (Read more, Code view) */}
+            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-[#2a2a2a] bg-[#1a1a1a]" dir={isRtl ? 'rtl' : 'ltr'}>
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Insert Read more separator">
+                        <span className="text-[12px] px-2 font-medium">Read more</span>
+                    </Button>
+                </div>
+                <div className="flex items-center bg-[#111] border border-[#333] rounded-md p-0.5 shadow-sm">
+                    <Button title="Code View">
+                        <span className="text-[12px] px-1 font-mono font-bold">&lt;/&gt;</span>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -181,7 +201,6 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
         if (!data || data === '{}' || data === '[]') return '';
         try {
             const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-            // If it's an empty object, TipTap prefers empty string
             if (Object.keys(parsed).length === 0) return '';
             return parsed;
         } catch (e) {
@@ -193,7 +212,7 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
     const parsedAr = parseInitial(initialDataAr);
 
     // TipTap editors
-    const editorEn = useEditor({
+    const editorConfig = {
         extensions: [
             StarterKit,
             Underline,
@@ -203,12 +222,16 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
             TextStyle,
             Color,
         ],
-        content: parsedEn,
         editorProps: {
             attributes: {
-                class: 'prose prose-slate dark:prose-invert max-w-none focus:outline-none min-h-[500px] p-6',
+                class: 'prose max-w-none focus:outline-none min-h-[500px] p-6 text-[#d4d4d4] [&_*]:text-[#d4d4d4]',
             },
         },
+    };
+
+    const editorEn = useEditor({
+        ...editorConfig,
+        content: parsedEn,
         onUpdate: ({ editor }) => {
             const json = editor.getJSON();
             const input = document.getElementById('content_en');
@@ -217,21 +240,13 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
     });
 
     const editorAr = useEditor({
-        extensions: [
-            StarterKit,
-            Underline,
-            Image,
-            Link.configure({ openOnClick: false }),
-            TextAlign.configure({ types: ['heading', 'paragraph'] }),
-            TextStyle,
-            Color,
-        ],
+        ...editorConfig,
         content: parsedAr,
         editorProps: {
             attributes: {
-                class: 'prose prose-slate dark:prose-invert max-w-none focus:outline-none min-h-[500px] p-6',
+                ...editorConfig.editorProps.attributes,
                 dir: 'rtl'
-            },
+            }
         },
         onUpdate: ({ editor }) => {
             const json = editor.getJSON();
@@ -241,7 +256,6 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
     });
 
     useEffect(() => {
-        // Ensure hidden inputs exist
         const ensureInput = (id, name) => {
             let input = document.getElementById(id);
             if (!input) {
@@ -270,44 +284,44 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
     };
 
     return (
-        <div>
+        <div className="font-sans">
             <div className="flex justify-between items-center mb-4">
-                <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner border border-slate-200 dark:border-slate-700 w-fit">
+                <div className="flex bg-[#1a1a1a] rounded-md p-1 shadow-inner border border-[#333] w-fit">
                     <button 
                         type="button" 
                         onClick={() => handleSwitchLang('en')}
-                        className={`px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 ${
+                        className={`px-5 py-1.5 text-sm font-bold rounded transition-all flex items-center gap-2 ${
                             lang === 'en' 
-                            ? 'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600' 
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                            ? 'bg-[#333] shadow-sm text-white border border-[#444]' 
+                            : 'text-[#888] hover:text-white'
                         }`}
                     >
-                        <span className="text-sm font-black text-slate-500 dark:text-slate-400">EN</span>
+                        <span>EN</span>
                     </button>
                     <button 
                         type="button" 
                         onClick={() => handleSwitchLang('ar')}
-                        className={`px-5 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2 ${
+                        className={`px-5 py-1.5 text-sm font-bold rounded transition-all flex items-center gap-2 ${
                             lang === 'ar' 
-                            ? 'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600' 
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                            ? 'bg-[#333] shadow-sm text-white border border-[#444]' 
+                            : 'text-[#888] hover:text-white'
                         }`}
                     >
-                        <span className="text-sm font-black text-slate-500 dark:text-slate-400">AR</span>
+                        <span>AR</span>
                     </button>
                 </div>
             </div>
 
-            <div style={{ display: lang === 'en' ? 'block' : 'none' }} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm overflow-hidden relative">
+            <div style={{ display: lang === 'en' ? 'block' : 'none' }} className="border border-[#333] rounded-lg shadow-sm overflow-hidden bg-[#262626]">
                 <MenuBar editor={editorEn} isRtl={false} />
-                <div className="max-h-[700px] overflow-y-auto">
+                <div className="max-h-[700px] overflow-y-auto" style={{ backgroundColor: '#2b2b2b' }}>
                     <EditorContent editor={editorEn} />
                 </div>
             </div>
             
-            <div style={{ display: lang === 'ar' ? 'block' : 'none' }} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm overflow-hidden relative">
+            <div style={{ display: lang === 'ar' ? 'block' : 'none' }} className="border border-[#333] rounded-lg shadow-sm overflow-hidden bg-[#262626]">
                 <MenuBar editor={editorAr} isRtl={true} />
-                <div className="max-h-[700px] overflow-y-auto" dir="rtl">
+                <div className="max-h-[700px] overflow-y-auto" dir="rtl" style={{ backgroundColor: '#2b2b2b' }}>
                     <EditorContent editor={editorAr} />
                 </div>
             </div>
