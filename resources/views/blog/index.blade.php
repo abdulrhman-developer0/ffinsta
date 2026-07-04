@@ -14,19 +14,7 @@
                 <h1 class="text-4xl md:text-5xl font-extrabold text-primary tracking-tight">{{ __('Our Blog') }}</h1>
                 <p class="mt-4 max-w-2xl mx-auto text-lg text-secondary">{{ __('Stay up to date with the latest news, features, and updates.') }}</p>
                 
-                <!-- Hashtag Filters -->
-                @if(isset($hashtags) && $hashtags->count() > 0)
-                <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-                    <a href="{{ route('blog.index') }}" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 {{ !isset($selectedHashtag) ? 'bg-brand-500 text-white shadow-glow' : 'bg-surface-3 text-secondary hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/20' }}">
-                        {{ __('All Posts') }}
-                    </a>
-                    @foreach($hashtags as $tag)
-                        <a href="{{ route('blog.tag', $tag->slug) }}" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 {{ (isset($selectedHashtag) && $selectedHashtag->id === $tag->id) ? 'bg-brand-500 text-white shadow-glow' : 'bg-surface-3 text-secondary hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/20' }}">
-                            #{{ $tag->name }}
-                        </a>
-                    @endforeach
-                </div>
-                @endif
+
             </div>
         </div>
     </x-slot>
@@ -42,39 +30,37 @@
                     <p class="mt-2 text-secondary">{{ __('Check back later for new updates.') }}</p>
                 </div>
             @else
-                <div class="flex flex-col gap-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                     @foreach($posts as $index => $post)
-                        <!-- List Post -->
-                        <div class="group flex flex-col md:flex-row gap-8 items-center bg-surface-2 p-4 rounded-3xl border border-subtle hover:shadow-lg hover:border-brand-200 transition-all duration-300">
-                            <div class="w-full md:w-1/3 aspect-video md:aspect-[4/3] rounded-2xl overflow-hidden flex-shrink-0 relative">
+                        <!-- Grid Post Card -->
+                        <div class="group flex flex-col gap-6 bg-surface-2 p-4 sm:p-5 rounded-3xl border border-subtle hover:shadow-xl hover:border-brand-300 dark:hover:border-brand-600 hover:-translate-y-1 transition-all duration-300 h-full relative">
+                            <!-- Clickable Overlay -->
+                            <a href="{{ route('blog.show', $post->localized_slug) }}" class="absolute inset-0 z-0 rounded-3xl"></a>
+                            
+                            <div class="w-full aspect-[16/10] rounded-2xl overflow-hidden flex-shrink-0 relative z-10 pointer-events-none">
                                 @if($post->cover_image_url)
-                                    <a href="{{ route('blog.show', $post->localized_slug) }}" class="block w-full h-full">
-                                        <img src="{{ $post->cover_image_url }}" alt="{{ $post->localized_title }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
-                                    </a>
+                                    <img src="{{ $post->cover_image_url }}" alt="{{ $post->localized_title }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
                                 @else
-                                    <div class="w-full h-full bg-brand-50 flex items-center justify-center">
-                                        <svg class="h-10 w-10 text-brand-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    <div class="w-full h-full bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center">
+                                        <svg class="h-12 w-12 text-brand-300 dark:text-brand-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                     </div>
                                 @endif
+                                <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
                             </div>
-                            <div class="w-full md:w-2/3 py-2 pr-4 rtl:pl-4 rtl:pr-0">
-                                <div class="flex items-center gap-2 mb-3">
-                                    @foreach($post->hashtags->take(3) as $tag)
-                                        <a href="{{ route('blog.tag', $tag->slug) }}" class="text-xs font-bold text-brand hover:text-brand-600 transition-colors uppercase tracking-wide">#{{ $tag->name }}</a>
-                                    @endforeach
-                                </div>
-                                <a href="{{ route('blog.show', $post->localized_slug) }}" class="block group-hover:text-brand-600 transition-colors">
-                                    <h3 class="text-2xl font-bold text-primary mb-3 leading-snug">{{ $post->localized_title }}</h3>
-                                    <p class="text-secondary mb-6 line-clamp-2">{{ Str::limit($post->rendered_plain_text, 150) }}</p>
-                                </a>
-                                <div class="flex items-center justify-between mt-4">
-                                    <div class="flex items-center gap-5 text-sm font-medium text-muted">
+                            
+                            <div class="w-full flex flex-col flex-1 px-2 z-10 pointer-events-none">
+
+                                <h3 class="text-2xl font-bold text-primary mb-3 leading-snug line-clamp-2" title="{{ $post->localized_title }}">{{ $post->localized_title }}</h3>
+                                <p class="text-secondary mb-6 line-clamp-3">{{ Str::limit($post->rendered_plain_text, 150) }}</p>
+                                
+                                <div class="flex items-center justify-between mt-auto pt-4 border-t border-subtle">
+                                    <div class="flex items-center gap-4 text-xs font-medium text-muted">
                                         <span class="flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> {{ $post->created_at->format('M d, Y') }}</span>
                                         <span class="flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg> {{ $post->views }}</span>
                                     </div>
-                                    <a href="{{ route('blog.show', $post->localized_slug) }}" class="inline-flex items-center gap-2 text-sm font-bold text-brand hover:text-brand-600 transition-colors">
-                                        {{ __('Read more') }} <svg class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                                    </a>
+                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-brand-50 text-brand dark:bg-brand-900/30 dark:text-brand-400 group-hover:bg-brand-500 group-hover:text-white transition-colors">
+                                        <svg class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" /></svg>
+                                    </span>
                                 </div>
                             </div>
                         </div>

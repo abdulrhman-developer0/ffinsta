@@ -1,10 +1,7 @@
-@php
-    $tagsStr = $post->hashtags->pluck('name')->implode(', ');
-@endphp
 <x-public-layout>
     <x-slot name="title">{{ $post->localized_title }} - {{ config('app.name') }}</x-slot>
     <x-slot name="meta_description">{{ Str::limit($plainText, 160) }}</x-slot>
-    <x-slot name="meta_keywords">{{ $tagsStr }}</x-slot>
+    <x-slot name="meta_keywords">blog, news, updates, {{ config('app.name') }}</x-slot>
     @if($post->cover_image_url)
         <x-slot name="og_image">{{ Str::startsWith($post->cover_image_url, 'http') ? $post->cover_image_url : asset($post->cover_image_url) }}</x-slot>
     @endif
@@ -14,11 +11,6 @@
 
     <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="mb-8 text-center">
-            <div class="flex items-center justify-center gap-3 mb-4 flex-wrap">
-                @foreach($post->hashtags as $tag)
-                    <a href="{{ route('blog.tag', $tag->slug) }}" class="badge bg-brand-100 text-brand-700 hover:bg-brand-200 transition-colors px-3 py-1 text-sm">#{{ $tag->name }}</a>
-                @endforeach
-            </div>
 
             <h1 class="text-4xl md:text-5xl font-extrabold text-primary tracking-tight leading-tight mb-4">
                 {{ $post->localized_title }}
