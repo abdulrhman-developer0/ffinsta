@@ -149,17 +149,17 @@ const MenuBar = ({ editor, isRtl }) => {
 
                 {/* Colors */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
-                    <div className="relative group flex items-center">
-                        <Button title="Text Color"><Palette size={15} /></Button>
-                        <div className="absolute top-full rtl:right-0 ltr:left-0 mt-1 hidden group-hover:flex flex-wrap w-40 p-2 gap-1 bg-white dark:bg-slate-800 shadow-xl rounded-md border border-slate-200 dark:border-slate-600 z-50">
-                            {['#ffffff', '#1e293b', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'].map(color => (
-                                <button key={color} type="button" onClick={() => editor.chain().focus().setColor(color).run()} 
-                                        className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-sm border border-slate-200 dark:border-transparent"
-                                        style={{ backgroundColor: color }} />
-                            ))}
-                            <button type="button" onClick={() => editor.chain().focus().unsetColor().run()} className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform bg-transparent border border-slate-300 dark:border-slate-500 text-slate-600 dark:text-white text-xs flex items-center justify-center font-bold">X</button>
-                        </div>
-                    </div>
+                    <label title="Text Color" className="cursor-pointer p-1.5 rounded-md flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors relative overflow-hidden">
+                        <Palette size={15} />
+                        <input 
+                            type="color" 
+                            className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
+                            onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+                        />
+                    </label>
+                    <Button onClick={() => editor.chain().focus().unsetColor().run()} title="Remove Color">
+                        <RemoveFormatting size={14} />
+                    </Button>
                 </div>
 
                 {/* Media & Blockquote */}
