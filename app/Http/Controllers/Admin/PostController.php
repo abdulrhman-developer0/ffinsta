@@ -45,10 +45,23 @@ class PostController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active', true);
         
-        $slug = $this->generateUniqueSlug($validated['title']['en'] ?? '', $validated['title']['ar'] ?? '');
+        $titleEn = $validated['title']['en'] ?? null;
+        $titleAr = $validated['title']['ar'] ?? null;
+        if (empty($titleEn)) $titleEn = $titleAr;
+        if (empty($titleAr)) $titleAr = $titleEn;
+        $validated['title']['en'] = $titleEn;
+        $validated['title']['ar'] = $titleAr;
+
+        $slug = $this->generateUniqueSlug($titleEn ?? '', $titleAr ?? '');
         
         $contentEn = json_decode($validated['content']['en'] ?? '{}', true) ?: $validated['content']['en'];
         $contentAr = json_decode($validated['content']['ar'] ?? '{}', true) ?: $validated['content']['ar'];
+        
+        $isEmptyEn = $this->isTipTapEmpty($contentEn);
+        $isEmptyAr = $this->isTipTapEmpty($contentAr);
+        
+        if ($isEmptyEn && !$isEmptyAr) $contentEn = $contentAr;
+        if ($isEmptyAr && !$isEmptyEn) $contentAr = $contentEn;
         
         $unifiedContent = [
             'en' => $contentEn,
@@ -105,7 +118,14 @@ class PostController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active', false);
         
-        $slug = $this->generateUniqueSlug($validated['title']['en'] ?? '', $validated['title']['ar'] ?? '', $post->id);
+        $titleEn = $validated['title']['en'] ?? null;
+        $titleAr = $validated['title']['ar'] ?? null;
+        if (empty($titleEn)) $titleEn = $titleAr;
+        if (empty($titleAr)) $titleAr = $titleEn;
+        $validated['title']['en'] = $titleEn;
+        $validated['title']['ar'] = $titleAr;
+
+        $slug = $this->generateUniqueSlug($titleEn ?? '', $titleAr ?? '', $post->id);
         
         $updateData = [
             'title' => $validated['title'],
@@ -115,6 +135,12 @@ class PostController extends Controller
 
         $contentEn = json_decode($validated['content']['en'] ?? '{}', true) ?: $validated['content']['en'];
         $contentAr = json_decode($validated['content']['ar'] ?? '{}', true) ?: $validated['content']['ar'];
+        
+        $isEmptyEn = $this->isTipTapEmpty($contentEn);
+        $isEmptyAr = $this->isTipTapEmpty($contentAr);
+        
+        if ($isEmptyEn && !$isEmptyAr) $contentEn = $contentAr;
+        if ($isEmptyAr && !$isEmptyEn) $contentAr = $contentEn;
         
         $unifiedContent = [
             'en' => $contentEn,
@@ -215,4 +241,11 @@ class PostController extends Controller
         return response()->json(['success' => 0]);
     }
 
+    private function isTipTapEmpty($json)
+    {
+        if (is_string($json)) $json = json_decode($json, true);
+        if (!is_array($json) || empty($json)) return true;
+        if (isset($json['content']) && count($json['content']) === 1 && $json['content'][0]['type'] === 'paragraph' && empty($json['content'][0]['content'])) return true;
+        return false;
+    }
 }
