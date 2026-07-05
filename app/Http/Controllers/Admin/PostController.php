@@ -24,20 +24,20 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $editorJsRule = function ($attribute, $value, $fail) {
+        $tipTapRule = function ($attribute, $value, $fail) {
             if (!$value) return;
             $data = is_string($value) ? json_decode($value, true) : $value;
-            if (!$data || !isset($data['blocks']) || count($data['blocks']) === 0) {
+            if (!$data || !isset($data['type']) || $data['type'] !== 'doc') {
                 $lang = str_replace('content.', '', $attribute);
-                $fail("The content ($lang) must have at least one block.");
+                $fail("The content ($lang) is invalid.");
             }
         };
 
         $validated = $request->validate([
             'title.en' => 'required_without:title.ar|nullable|string|max:255',
             'title.ar' => 'required_without:title.en|nullable|string|max:255',
-            'content.en' => ['required_without:content.ar', 'nullable', 'string', $editorJsRule],
-            'content.ar' => ['required_without:content.en', 'nullable', 'string', $editorJsRule],
+            'content.en' => ['required_without:content.ar', 'nullable', 'string', $tipTapRule],
+            'content.ar' => ['required_without:content.en', 'nullable', 'string', $tipTapRule],
             'image' => 'required|image|max:2048',
             'is_active' => 'boolean',
             'hashtags' => 'nullable|string', // Comma separated tags
@@ -50,7 +50,10 @@ class PostController extends Controller
         $contentEn = json_decode($validated['content']['en'] ?? '{}', true) ?: $validated['content']['en'];
         $contentAr = json_decode($validated['content']['ar'] ?? '{}', true) ?: $validated['content']['ar'];
         
-        $unifiedContent = $this->mergeEditorJsContent($contentEn, $contentAr);
+        $unifiedContent = [
+            'en' => $contentEn,
+            'ar' => $contentAr,
+        ];
 
         $post = Post::create([
             'title' => $validated['title'],
@@ -81,20 +84,20 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        $editorJsRule = function ($attribute, $value, $fail) {
+        $tipTapRule = function ($attribute, $value, $fail) {
             if (!$value) return;
             $data = is_string($value) ? json_decode($value, true) : $value;
-            if (!$data || !isset($data['blocks']) || count($data['blocks']) === 0) {
+            if (!$data || !isset($data['type']) || $data['type'] !== 'doc') {
                 $lang = str_replace('content.', '', $attribute);
-                $fail("The content ($lang) must have at least one block.");
+                $fail("The content ($lang) is invalid.");
             }
         };
 
         $validated = $request->validate([
             'title.en' => 'required_without:title.ar|nullable|string|max:255',
             'title.ar' => 'required_without:title.en|nullable|string|max:255',
-            'content.en' => ['nullable', 'string', $editorJsRule],
-            'content.ar' => ['nullable', 'string', $editorJsRule],
+            'content.en' => ['nullable', 'string', $tipTapRule],
+            'content.ar' => ['nullable', 'string', $tipTapRule],
             'image' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
             'hashtags' => 'nullable|string',
@@ -110,14 +113,14 @@ class PostController extends Controller
             'is_active' => $validated['is_active'],
         ];
 
-        // Only update content if there was a recent activity (tracked via hidden input)
-        if ($request->filled('content_last_activity')) {
-            $contentEn = json_decode($validated['content']['en'] ?? '{}', true) ?: $validated['content']['en'];
-            $contentAr = json_decode($validated['content']['ar'] ?? '{}', true) ?: $validated['content']['ar'];
-            
-            $unifiedContent = $this->mergeEditorJsContent($contentEn, $contentAr);
-            $updateData['content'] = $unifiedContent;
-        }
+        $contentEn = json_decode($validated['content']['en'] ?? '{}', true) ?: $validated['content']['en'];
+        $contentAr = json_decode($validated['content']['ar'] ?? '{}', true) ?: $validated['content']['ar'];
+        
+        $unifiedContent = [
+            'en' => $contentEn,
+            'ar' => $contentAr,
+        ];
+        $updateData['content'] = $unifiedContent;
 
         if ($request->hasFile('image')) {
             $post->addMediaFromRequest('image')->toMediaCollection('cover');
@@ -127,7 +130,7 @@ class PostController extends Controller
 
         $this->syncHashtags($post, $request->input('hashtags'));
 
-        return redirect()->route('admin.posts.index')->with('success', __('Post updated successfully.'));
+        return redirect()->back()->with('success', __('Post updated successfully.'));
     }
 
     private function generateUniqueSlug($titleEn, $titleAr, $postId = null)
@@ -212,76 +215,4 @@ class PostController extends Controller
         return response()->json(['success' => 0]);
     }
 
-    private function mergeEditorJsContent($en, $ar)
-    {
-        if (!$en || empty($en['blocks'])) {
-            return $en ?: $ar;
-        }
-
-        $unified = $en;
-        $unified['blocks'] = [];
-
-        $arBlocks = $ar['blocks'] ?? [];
-
-        foreach ($en['blocks'] as $i => $enBlock) {
-            $arBlock = $arBlocks[$i] ?? $enBlock; // Fallback to EN if AR is missing at this index
-            
-            $unifiedBlock = $enBlock;
-            
-            $mergeField = function($enField, $arField) {
-                return ['en' => $enField, 'ar' => $arField];
-            };
-
-            if (isset($enBlock['data'])) {
-                $enData = $enBlock['data'];
-                $arData = $arBlock['data'] ?? [];
-                
-                switch ($enBlock['type']) {
-                    case 'paragraph':
-                    case 'header':
-                    case 'heading1':
-                    case 'heading2':
-                    case 'heading3':
-                    case 'heading4':
-                    case 'heading5':
-                        $unifiedBlock['data']['text'] = $mergeField($enData['text'] ?? '', $arData['text'] ?? '');
-                        break;
-                    case 'quote':
-                        $unifiedBlock['data']['text'] = $mergeField($enData['text'] ?? '', $arData['text'] ?? '');
-                        $unifiedBlock['data']['caption'] = $mergeField($enData['caption'] ?? '', $arData['caption'] ?? '');
-                        break;
-                    case 'list':
-                    case 'checklist':
-                        $unifiedBlock['data']['items'] = $mergeField($enData['items'] ?? [], $arData['items'] ?? []);
-                        break;
-                    case 'image':
-                    case 'embed':
-                        $unifiedBlock['data']['caption'] = $mergeField($enData['caption'] ?? '', $arData['caption'] ?? '');
-                        break;
-                    case 'button':
-                        $unifiedBlock['data']['text'] = $mergeField($enData['text'] ?? '', $arData['text'] ?? '');
-                        $unifiedBlock['data']['link'] = $mergeField($enData['link'] ?? '', $arData['link'] ?? '');
-                        break;
-                }
-            }
-            
-            // Merge block tunes (alignment)
-            if (isset($enBlock['tunes']['alignment']['alignment']) || isset($arBlock['tunes']['alignment']['alignment'])) {
-                $enAlign = $enBlock['tunes']['alignment']['alignment'] ?? null;
-                $arAlign = $arBlock['tunes']['alignment']['alignment'] ?? null;
-                
-                if (!isset($unifiedBlock['tunes'])) $unifiedBlock['tunes'] = [];
-                if (!isset($unifiedBlock['tunes']['alignment'])) $unifiedBlock['tunes']['alignment'] = [];
-                
-                $unifiedBlock['tunes']['alignment']['alignment'] = [
-                    'en' => $enAlign,
-                    'ar' => $arAlign
-                ];
-            }
-
-            $unified['blocks'][] = $unifiedBlock;
-        }
-
-        return $unified;
-    }
 }

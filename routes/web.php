@@ -98,4 +98,7 @@ Route::get('/cron/run-queue', function (\Illuminate\Http\Request $request) {
 // GitHub Deployment Webhook
 Route::post('/deploy/webhook', [\App\Http\Controllers\DeployController::class, 'deploy']);
 
+// Sitemap
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
 require __DIR__.'/auth.php';

@@ -69,7 +69,7 @@ const MenuBar = ({ editor, isRtl }) => {
             disabled={disabled}
             title={title}
             className={`px-2 py-1.5 rounded-sm transition-colors flex items-center justify-center
-                ${isActive ? 'bg-slate-200 dark:bg-[#444] text-slate-900 dark:text-white' : 'text-slate-600 dark:text-[#bbb] hover:text-slate-900 hover:bg-slate-200 dark:hover:text-white dark:hover:bg-[#333]'}
+                ${isActive ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 hover:bg-slate-200 dark:hover:text-white dark:hover:bg-slate-600'}
                 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}
         >
@@ -78,19 +78,19 @@ const MenuBar = ({ editor, isRtl }) => {
     );
 
     return (
-        <div className="flex flex-col bg-slate-50 dark:bg-[#1a1a1a] border border-slate-200 dark:border-[#333] rounded-t-lg select-none">
+        <div className="flex flex-col bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-lg select-none">
             {/* Top Toolbar */}
-            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-slate-200 dark:border-[#2a2a2a]" dir={isRtl ? 'rtl' : 'ltr'}>
+            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-slate-200 dark:border-slate-700/80" dir={isRtl ? 'rtl' : 'ltr'}>
                 
                 {/* Format Clear */}
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
                     <Button onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear Formatting">
                         <RemoveFormatting size={15} />
                     </Button>
                 </div>
                 
                 {/* Basic Text Formatting */}
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
                     <Button onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold">
                         <Bold size={15} />
                     </Button>
@@ -106,7 +106,7 @@ const MenuBar = ({ editor, isRtl }) => {
                 </div>
 
                 {/* Headings */}
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
                     <Button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} title="Heading 2">
                         <Heading2 size={15} />
                     </Button>
@@ -122,7 +122,7 @@ const MenuBar = ({ editor, isRtl }) => {
                 </div>
 
                 {/* Lists */}
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
                     <Button onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title="Bullet List">
                         <List size={15} />
                     </Button>
@@ -132,7 +132,7 @@ const MenuBar = ({ editor, isRtl }) => {
                 </div>
 
                 {/* Alignment */}
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
                     <Button onClick={() => editor.chain().focus().setTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })} title="Align Left">
                         <AlignLeft size={15} />
                     </Button>
@@ -148,22 +148,22 @@ const MenuBar = ({ editor, isRtl }) => {
                 </div>
 
                 {/* Colors */}
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
                     <div className="relative group flex items-center">
                         <Button title="Text Color"><Palette size={15} /></Button>
-                        <div className="absolute top-full rtl:right-0 ltr:left-0 mt-1 hidden group-hover:flex flex-wrap w-40 p-2 gap-1 bg-white dark:bg-[#222] shadow-xl rounded-md border border-slate-200 dark:border-[#444] z-50">
+                        <div className="absolute top-full rtl:right-0 ltr:left-0 mt-1 hidden group-hover:flex flex-wrap w-40 p-2 gap-1 bg-white dark:bg-slate-800 shadow-xl rounded-md border border-slate-200 dark:border-slate-600 z-50">
                             {['#ffffff', '#1e293b', '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'].map(color => (
                                 <button key={color} type="button" onClick={() => editor.chain().focus().setColor(color).run()} 
                                         className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-sm border border-slate-200 dark:border-transparent"
                                         style={{ backgroundColor: color }} />
                             ))}
-                            <button type="button" onClick={() => editor.chain().focus().unsetColor().run()} className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform bg-transparent border border-slate-300 dark:border-[#555] text-slate-600 dark:text-white text-xs flex items-center justify-center font-bold">X</button>
+                            <button type="button" onClick={() => editor.chain().focus().unsetColor().run()} className="w-6 h-6 rounded-full cursor-pointer hover:scale-110 transition-transform bg-transparent border border-slate-300 dark:border-slate-500 text-slate-600 dark:text-white text-xs flex items-center justify-center font-bold">X</button>
                         </div>
                     </div>
                 </div>
 
                 {/* Media & Blockquote */}
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
                     <Button onClick={setLink} isActive={editor.isActive('link')} title="Link">
                         <LinkIcon size={15} />
                     </Button>
@@ -177,14 +177,9 @@ const MenuBar = ({ editor, isRtl }) => {
             </div>
 
             {/* Bottom Toolbar (Read more, Code view) */}
-            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-slate-200 dark:border-[#2a2a2a] bg-slate-50 dark:bg-[#1a1a1a]" dir={isRtl ? 'rtl' : 'ltr'}>
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
-                    <Button onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Insert Read more separator">
-                        <span className="text-[12px] px-2 font-medium">Read more</span>
-                    </Button>
-                </div>
-                <div className="flex items-center bg-white dark:bg-[#111] border border-slate-200 dark:border-[#333] rounded-md p-0.5 shadow-sm">
-                    <Button title="Code View">
+            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800" dir={isRtl ? 'rtl' : 'ltr'}>
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
+                    <Button onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} title="Code Block">
                         <span className="text-[12px] px-1 font-mono font-bold">&lt;/&gt;</span>
                     </Button>
                 </div>
@@ -196,15 +191,15 @@ const MenuBar = ({ editor, isRtl }) => {
 export default function PostEditor({ initialDataEn, initialDataAr }) {
     const [lang, setLang] = useState('en');
 
-    // Parse existing JSON string to object if necessary
     const parseInitial = (data) => {
         if (!data || data === '{}' || data === '[]') return '';
+        if (typeof data === 'string' && data.trim().startsWith('<')) return data; // Raw HTML
         try {
             const parsed = typeof data === 'string' ? JSON.parse(data) : data;
             if (Object.keys(parsed).length === 0) return '';
             return parsed;
         } catch (e) {
-            return '';
+            return typeof data === 'string' ? data : ''; // Return raw string if JSON parsing fails
         }
     };
 
@@ -224,7 +219,8 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
         ],
         editorProps: {
             attributes: {
-                class: 'prose max-w-none focus:outline-none min-h-[500px] p-6 text-slate-800 dark:text-[#d4d4d4] [&_*]:text-slate-800 dark:[&_*]:text-[#d4d4d4]',
+                class: 'prose dark:prose-invert max-w-none focus:outline-none p-6 text-slate-800 dark:text-slate-200 [&_*]:text-slate-800 dark:[&_*]:text-slate-200',
+                style: 'min-height: 500px;',
             },
         },
     };
@@ -286,14 +282,14 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
     return (
         <div className="font-sans">
             <div className="flex justify-between items-center mb-4">
-                <div className="flex bg-slate-100 dark:bg-[#1a1a1a] rounded-md p-1 shadow-inner border border-slate-200 dark:border-[#333] w-fit">
+                <div className="flex bg-slate-100 dark:bg-slate-800 rounded-md p-1 shadow-inner border border-slate-200 dark:border-slate-700 w-fit">
                     <button 
                         type="button" 
                         onClick={() => handleSwitchLang('en')}
                         className={`px-5 py-1.5 text-sm font-bold rounded transition-all flex items-center gap-2 ${
                             lang === 'en' 
-                            ? 'bg-white text-slate-800 border-slate-300 dark:bg-[#333] shadow-sm dark:text-white border dark:border-[#444]' 
-                            : 'text-slate-500 dark:text-[#888] hover:text-slate-800 dark:hover:text-white'
+                            ? 'bg-white text-slate-800 border-slate-300 dark:bg-slate-700 shadow-sm dark:text-white border dark:border-slate-600' 
+                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
                         }`}
                     >
                         <span>EN</span>
@@ -303,8 +299,8 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
                         onClick={() => handleSwitchLang('ar')}
                         className={`px-5 py-1.5 text-sm font-bold rounded transition-all flex items-center gap-2 ${
                             lang === 'ar' 
-                            ? 'bg-white text-slate-800 border-slate-300 dark:bg-[#333] shadow-sm dark:text-white border dark:border-[#444]' 
-                            : 'text-slate-500 dark:text-[#888] hover:text-slate-800 dark:hover:text-white'
+                            ? 'bg-white text-slate-800 border-slate-300 dark:bg-slate-700 shadow-sm dark:text-white border dark:border-slate-600' 
+                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
                         }`}
                     >
                         <span>AR</span>
@@ -312,17 +308,17 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
                 </div>
             </div>
 
-            <div style={{ display: lang === 'en' ? 'block' : 'none' }} className="border border-slate-200 dark:border-[#333] rounded-lg shadow-sm overflow-hidden bg-white dark:bg-[#262626]">
+            <div style={{ display: lang === 'en' ? 'block' : 'none' }} className="border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden bg-white dark:bg-slate-800">
                 <MenuBar editor={editorEn} isRtl={false} />
-                <div className="max-h-[700px] overflow-y-auto bg-white dark:bg-[#2b2b2b]">
-                    <EditorContent editor={editorEn} />
+                <div className="max-h-[700px] overflow-y-auto bg-transparent">
+                    <EditorContent editor={editorEn} className="bg-transparent dark:bg-transparent" />
                 </div>
             </div>
             
-            <div style={{ display: lang === 'ar' ? 'block' : 'none' }} className="border border-slate-200 dark:border-[#333] rounded-lg shadow-sm overflow-hidden bg-white dark:bg-[#262626]">
+            <div style={{ display: lang === 'ar' ? 'block' : 'none' }} className="border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden bg-white dark:bg-slate-800">
                 <MenuBar editor={editorAr} isRtl={true} />
-                <div className="max-h-[700px] overflow-y-auto bg-white dark:bg-[#2b2b2b]" dir="rtl">
-                    <EditorContent editor={editorAr} />
+                <div className="max-h-[700px] overflow-y-auto bg-transparent" dir="rtl">
+                    <EditorContent editor={editorAr} className="bg-transparent dark:bg-transparent" />
                 </div>
             </div>
         </div>

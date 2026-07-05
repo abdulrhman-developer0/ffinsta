@@ -90,41 +90,42 @@ class PostRenderService
 
         $attrs = $node['attrs'] ?? [];
         $textAlign = $attrs['textAlign'] ?? null;
-        $class = '';
+        $styleAttr = '';
         if ($textAlign && in_array($textAlign, ['left', 'center', 'right', 'justify'])) {
-            $class = "text-{$textAlign}";
+            $styleAttr = " style=\"text-align: {$textAlign};\"";
         }
-        $classAttr = $class ? " class=\"{$class}\"" : '';
 
         switch ($type) {
             case 'doc':
                 return $contentHtml;
             case 'paragraph':
                 if (empty(trim(strip_tags($contentHtml))) && empty($node['content'])) {
-                    return "<p{$classAttr}><br></p>";
+                    return "<p{$styleAttr}><br></p>";
                 }
-                return "<p{$classAttr}>{$contentHtml}</p>";
+                return "<p{$styleAttr}>{$contentHtml}</p>";
             case 'heading':
                 $level = $attrs['level'] ?? 2;
-                return "<h{$level}{$classAttr}>{$contentHtml}</h{$level}>";
+                return "<h{$level}{$styleAttr}>{$contentHtml}</h{$level}>";
             case 'blockquote':
-                return "<blockquote{$classAttr}>{$contentHtml}</blockquote>";
+                return "<blockquote{$styleAttr}>{$contentHtml}</blockquote>";
+            case 'codeBlock':
+                return "<pre><code{$styleAttr}>{$contentHtml}</code></pre>";
             case 'bulletList':
-                return "<ul{$classAttr}>{$contentHtml}</ul>";
+                return "<ul{$styleAttr}>{$contentHtml}</ul>";
             case 'orderedList':
-                return "<ol{$classAttr}>{$contentHtml}</ol>";
+                return "<ol{$styleAttr}>{$contentHtml}</ol>";
             case 'listItem':
                 return "<li>{$contentHtml}</li>";
             case 'image':
                 $src = $attrs['src'] ?? '';
                 $alt = $attrs['alt'] ?? '';
                 $title = $attrs['title'] ?? '';
-                $imgClass = "max-w-full h-auto rounded-xl shadow-lg my-6 mx-auto";
-                if ($class === 'text-left') $imgClass .= " ml-0 mr-auto";
-                elseif ($class === 'text-right') $imgClass .= " ml-auto mr-0";
+                $imgStyle = "max-width: 100%; height: auto; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); margin: 1.5rem auto;";
+                if ($textAlign === 'left') $imgStyle .= " margin-left: 0; margin-right: auto;";
+                elseif ($textAlign === 'right') $imgStyle .= " margin-left: auto; margin-right: 0;";
                 
                 if ($src) {
-                    return "<figure class=\"{$class}\"><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\" class=\"{$imgClass}\"></figure>";
+                    return "<figure{$styleAttr}><img src=\"{$src}\" alt=\"{$alt}\" title=\"{$title}\" style=\"{$imgStyle}\"></figure>";
                 }
                 return '';
             case 'text':
@@ -162,6 +163,8 @@ class PostRenderService
                 return "<u>{$text}</u>";
             case 'strike':
                 return "<s>{$text}</s>";
+            case 'code':
+                return "<code>{$text}</code>";
             case 'link':
                 $href = $attrs['href'] ?? '#';
                 $target = $attrs['target'] ?? '_blank';

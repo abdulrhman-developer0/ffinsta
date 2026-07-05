@@ -6,16 +6,23 @@ const mountEditor = () => {
     const mountPoint = document.getElementById('react-editor-mount');
     if (mountPoint && !mountPoint.dataset.mounted) {
         mountPoint.dataset.mounted = 'true';
-        let initialDataEn = {};
-        let initialDataAr = {};
+        let initialDataEn = '';
+        let initialDataAr = '';
+        
+        const dataEnRaw = mountPoint.getAttribute('data-en');
+        const dataArRaw = mountPoint.getAttribute('data-ar');
+
+        try {
+            initialDataEn = dataEnRaw ? JSON.parse(dataEnRaw) : {};
+        } catch(e) {
+            initialDataEn = dataEnRaw || ''; // Fallback to raw HTML
+        }
         
         try {
-            initialDataEn = JSON.parse(mountPoint.getAttribute('data-en') || '{}');
-        } catch(e) {}
-        
-        try {
-            initialDataAr = JSON.parse(mountPoint.getAttribute('data-ar') || '{}');
-        } catch(e) {}
+            initialDataAr = dataArRaw ? JSON.parse(dataArRaw) : {};
+        } catch(e) {
+            initialDataAr = dataArRaw || ''; // Fallback to raw HTML
+        }
         
         const root = createRoot(mountPoint);
         root.render(
