@@ -131,6 +131,16 @@ class PostRenderService
             case 'text':
                 $text = htmlspecialchars($node['text'] ?? '');
                 if (isset($node['marks']) && is_array($node['marks'])) {
+                    // Sort marks so that 'link' is always processed last.
+                    // This ensures <a> wraps other tags like <span>, allowing inner styles (like color) to override the <a> default color.
+                    usort($node['marks'], function($a, $b) {
+                        $typeA = $a['type'] ?? '';
+                        $typeB = $b['type'] ?? '';
+                        if ($typeA === 'link' && $typeB !== 'link') return 1;
+                        if ($typeB === 'link' && $typeA !== 'link') return -1;
+                        return 0;
+                    });
+
                     foreach ($node['marks'] as $mark) {
                         $text = $this->applyMark($text, $mark);
                     }

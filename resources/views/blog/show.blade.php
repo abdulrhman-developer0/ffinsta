@@ -38,7 +38,7 @@
             </div>
         @endif
 
-        <div class="prose prose-lg dark:prose-invert max-w-none mx-auto text-primary">
+        <div class="prose prose-lg dark:prose-invert max-w-none mx-auto text-primary prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base prose-headings:font-bold">
             {!! $renderedContent !!}
         </div>
         
