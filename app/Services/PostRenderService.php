@@ -178,9 +178,13 @@ class PostRenderService
             case 'link':
                 $href = !empty($attrs['href']) ? $attrs['href'] : '#';
                 
+                // Fix common user typos like https::/ or https:/
+                $href = preg_replace('~^(https?)::?/+~i', '$1://', $href);
+
                 // Ensure absolute URL for external links if missing protocol
-                if ($href !== '#' && !preg_match('~^(?:f|ht)tps?://~i', $href) && strpos($href, 'mailto:') !== 0 && strpos($href, 'tel:') !== 0 && strpos($href, '/') !== 0) {
-                    $href = 'https://' . $href;
+                $scheme = parse_url($href, PHP_URL_SCHEME);
+                if ($href !== '#' && empty($scheme) && strpos($href, 'mailto:') !== 0 && strpos($href, 'tel:') !== 0 && strpos($href, '/') !== 0) {
+                    $href = 'https://' . ltrim($href, '/');
                 }
 
                 $target = '_blank';
