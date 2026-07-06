@@ -22,7 +22,7 @@
 
 
     <div class="card-premium-glow rounded-3xl p-4 sm:p-6 lg:p-8 bg-surface border border-slate-200 dark:border-slate-800 shadow-xl">
-        <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data" id="postForm" x-data="{ isSubmitting: false }" @submit="syncEditors(event); isSubmitting = true;">
+        <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data" id="postForm" x-data="{ isSubmitting: false }" @submit="isSubmitting = true;">
             @csrf
             
             <div class="space-y-8 max-w-5xl mx-auto">
