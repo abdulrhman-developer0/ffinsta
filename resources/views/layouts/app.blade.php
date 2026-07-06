@@ -23,6 +23,8 @@
 
     @if(config('settings.site_favicon'))
         <link rel="icon" href="{{ config('settings.site_favicon') }}">
+    @elseif(config('settings.site_logo'))
+        <link rel="icon" href="{{ config('settings.site_logo') }}">
     @else
         <link rel="icon" type="image/png" href="{{ asset('favicon.ico') }}">
     @endif
