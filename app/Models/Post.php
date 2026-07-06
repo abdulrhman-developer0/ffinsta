@@ -16,6 +16,10 @@ class Post extends Model implements HasMedia
         'image',
         'is_active',
         'views',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'meta_header',
     ];
 
     protected $casts = [
@@ -23,6 +27,9 @@ class Post extends Model implements HasMedia
         'slug' => 'array',
         'content' => 'array',
         'is_active' => 'boolean',
+        'meta_title' => 'array',
+        'meta_description' => 'array',
+        'meta_keywords' => 'array',
     ];
 
     public function hashtags()

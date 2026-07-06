@@ -65,6 +65,18 @@
                         <input type="hidden" name="content_last_activity" id="content_last_activity" value="">
                         @error('title.en') <p class="form-error">{{ $message }}</p> @enderror
                         @error('title.ar') <p class="form-error">{{ $message }}</p> @enderror
+
+                        <!-- Slug Field -->
+                        <div class="mt-4" x-show="titleLang === 'en'">
+                            <label class="form-label text-sm m-0">{{ __('Custom Slug (English)') }}</label>
+                            <input type="text" name="slug[en]" value="{{ old('slug.en', $post->slug['en'] ?? '') }}" class="form-input mt-1 py-2 rounded-xl border-slate-200 dark:border-slate-600 focus:ring-brand-500" placeholder="{{ __('Leave empty to auto-generate') }}">
+                            @error('slug.en') <p class="form-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="mt-4" x-show="titleLang === 'ar'" style="display: none;">
+                            <label class="form-label text-sm m-0">{{ __('Custom Slug (Arabic)') }}</label>
+                            <input type="text" name="slug[ar]" value="{{ old('slug.ar', $post->slug['ar'] ?? '') }}" class="form-input mt-1 py-2 rounded-xl border-slate-200 dark:border-slate-600 focus:ring-brand-500" placeholder="{{ __('Leave empty to auto-generate') }}" dir="rtl">
+                            @error('slug.ar') <p class="form-error">{{ $message }}</p> @enderror
+                        </div>
                     </div>
 
                     <!-- Cover Image -->
@@ -116,6 +128,51 @@
                         @error('content.en') <p class="form-error">{{ $message }}</p> @enderror
                         @error('content.ar') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
+                    </div>
+                </div>
+
+                <!-- Meta Settings Section -->
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-6 lg:p-8 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm space-y-4 sm:space-y-6" x-data="{ metaLang: 'en' }">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-xl text-primary flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                            {{ __('Meta Settings') }}
+                        </h3>
+                        <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner border border-slate-200 dark:border-slate-700">
+                            <button type="button" @click="metaLang = 'en'" :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': metaLang === 'en', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': metaLang !== 'en'}" class="px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
+                                <span class="text-sm font-black text-slate-400">EN</span>
+                            </button>
+                            <button type="button" @click="metaLang = 'ar'" :class="{'bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400 border border-slate-200 dark:border-slate-600': metaLang === 'ar', 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300': metaLang !== 'ar'}" class="px-4 py-2 text-sm font-bold rounded-lg transition-all flex items-center gap-2">
+                                <span class="text-sm font-black text-slate-400">AR</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Meta Title -->
+                    <div class="form-group">
+                        <label class="form-label">{{ __('Meta Page Title') }}</label>
+                        <input x-show="metaLang === 'en'" type="text" name="meta_title[en]" value="{{ old('meta_title.en', $post->meta_title['en'] ?? '') }}" class="form-input rounded-xl border-slate-200 dark:border-slate-600" placeholder="SEO Title">
+                        <input x-show="metaLang === 'ar'" style="display: none;" type="text" name="meta_title[ar]" value="{{ old('meta_title.ar', $post->meta_title['ar'] ?? '') }}" class="form-input rounded-xl border-slate-200 dark:border-slate-600" dir="rtl" placeholder="عنوان SEO">
+                    </div>
+
+                    <!-- Meta Keywords -->
+                    <div class="form-group">
+                        <label class="form-label">{{ __('Meta Keywords') }}</label>
+                        <input x-show="metaLang === 'en'" type="text" name="meta_keywords[en]" value="{{ old('meta_keywords.en', $post->meta_keywords['en'] ?? '') }}" class="form-input rounded-xl border-slate-200 dark:border-slate-600" placeholder="keyword1, keyword2...">
+                        <input x-show="metaLang === 'ar'" style="display: none;" type="text" name="meta_keywords[ar]" value="{{ old('meta_keywords.ar', $post->meta_keywords['ar'] ?? '') }}" class="form-input rounded-xl border-slate-200 dark:border-slate-600" dir="rtl" placeholder="كلمة1, كلمة2...">
+                    </div>
+
+                    <!-- Meta Description -->
+                    <div class="form-group">
+                        <label class="form-label">{{ __('Meta Description') }}</label>
+                        <textarea x-show="metaLang === 'en'" name="meta_description[en]" class="form-input rounded-xl border-slate-200 dark:border-slate-600" rows="3" placeholder="SEO Description">{{ old('meta_description.en', $post->meta_description['en'] ?? '') }}</textarea>
+                        <textarea x-show="metaLang === 'ar'" style="display: none;" name="meta_description[ar]" class="form-input rounded-xl border-slate-200 dark:border-slate-600" rows="3" dir="rtl" placeholder="وصف SEO">{{ old('meta_description.ar', $post->meta_description['ar'] ?? '') }}</textarea>
+                    </div>
+
+                    <!-- Custom Header Tags -->
+                    <div class="form-group">
+                        <label class="form-label">{{ __('Custom Header Tags (<head>)') }}</label>
+                        <textarea name="meta_header" class="form-input rounded-xl font-mono text-sm border-slate-200 dark:border-slate-600" rows="3" dir="ltr" placeholder="<meta name='custom' content='...'>">{{ old('meta_header', $post->meta_header) }}</textarea>
                     </div>
                 </div>
 

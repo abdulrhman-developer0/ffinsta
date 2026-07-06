@@ -36,6 +36,15 @@ class PostController extends Controller
         $validated = $request->validate([
             'title.en' => 'required_without:title.ar|nullable|string|max:255',
             'title.ar' => 'required_without:title.en|nullable|string|max:255',
+            'slug.en' => 'nullable|string|max:255',
+            'slug.ar' => 'nullable|string|max:255',
+            'meta_title.en' => 'nullable|string|max:255',
+            'meta_title.ar' => 'nullable|string|max:255',
+            'meta_keywords.en' => 'nullable|string|max:255',
+            'meta_keywords.ar' => 'nullable|string|max:255',
+            'meta_description.en' => 'nullable|string|max:1000',
+            'meta_description.ar' => 'nullable|string|max:1000',
+            'meta_header' => 'nullable|string',
             'content.en' => ['required_without:content.ar', 'nullable', 'string', $tipTapRule],
             'content.ar' => ['required_without:content.en', 'nullable', 'string', $tipTapRule],
             'image' => 'required|image|max:2048',
@@ -52,7 +61,7 @@ class PostController extends Controller
         $validated['title']['en'] = $titleEn;
         $validated['title']['ar'] = $titleAr;
 
-        $slug = $this->generateUniqueSlug($titleEn ?? '', $titleAr ?? '');
+        $slug = $this->generateUniqueSlug($titleEn ?? '', $titleAr ?? '', null, $validated['slug']['en'] ?? null, $validated['slug']['ar'] ?? null);
         
         $contentEn = json_decode($validated['content']['en'] ?? '{}', true) ?: $validated['content']['en'];
         $contentAr = json_decode($validated['content']['ar'] ?? '{}', true) ?: $validated['content']['ar'];
@@ -73,6 +82,10 @@ class PostController extends Controller
             'slug' => $slug,
             'content' => $unifiedContent,
             'is_active' => $validated['is_active'],
+            'meta_title' => $validated['meta_title'] ?? null,
+            'meta_keywords' => $validated['meta_keywords'] ?? null,
+            'meta_description' => $validated['meta_description'] ?? null,
+            'meta_header' => $validated['meta_header'] ?? null,
         ]);
 
         if ($request->hasFile('image')) {
@@ -109,6 +122,15 @@ class PostController extends Controller
         $validated = $request->validate([
             'title.en' => 'required_without:title.ar|nullable|string|max:255',
             'title.ar' => 'required_without:title.en|nullable|string|max:255',
+            'slug.en' => 'nullable|string|max:255',
+            'slug.ar' => 'nullable|string|max:255',
+            'meta_title.en' => 'nullable|string|max:255',
+            'meta_title.ar' => 'nullable|string|max:255',
+            'meta_keywords.en' => 'nullable|string|max:255',
+            'meta_keywords.ar' => 'nullable|string|max:255',
+            'meta_description.en' => 'nullable|string|max:1000',
+            'meta_description.ar' => 'nullable|string|max:1000',
+            'meta_header' => 'nullable|string',
             'content.en' => ['nullable', 'string', $tipTapRule],
             'content.ar' => ['nullable', 'string', $tipTapRule],
             'image' => 'nullable|image|max:2048',
@@ -125,12 +147,16 @@ class PostController extends Controller
         $validated['title']['en'] = $titleEn;
         $validated['title']['ar'] = $titleAr;
 
-        $slug = $this->generateUniqueSlug($titleEn ?? '', $titleAr ?? '', $post->id);
+        $slug = $this->generateUniqueSlug($titleEn ?? '', $titleAr ?? '', $post->id, $validated['slug']['en'] ?? null, $validated['slug']['ar'] ?? null);
         
         $updateData = [
             'title' => $validated['title'],
             'slug' => $slug,
             'is_active' => $validated['is_active'],
+            'meta_title' => $validated['meta_title'] ?? null,
+            'meta_keywords' => $validated['meta_keywords'] ?? null,
+            'meta_description' => $validated['meta_description'] ?? null,
+            'meta_header' => $validated['meta_header'] ?? null,
         ];
 
         $contentEn = json_decode($validated['content']['en'] ?? '{}', true) ?: $validated['content']['en'];
@@ -159,10 +185,10 @@ class PostController extends Controller
         return redirect()->back()->with('success', __('Post updated successfully.'));
     }
 
-    private function generateUniqueSlug($titleEn, $titleAr, $postId = null)
+    private function generateUniqueSlug($titleEn, $titleAr, $postId = null, $customSlugEn = null, $customSlugAr = null)
     {
-        $baseEn = $titleEn ? Str::slug($titleEn) : '';
-        $baseAr = $titleAr ? (Str::slug($titleAr) ?: str_replace(' ', '-', $titleAr)) : '';
+        $baseEn = $customSlugEn ? Str::slug($customSlugEn) : ($titleEn ? Str::slug($titleEn) : '');
+        $baseAr = $customSlugAr ? (Str::slug($customSlugAr) ?: str_replace(' ', '-', $customSlugAr)) : ($titleAr ? (Str::slug($titleAr) ?: str_replace(' ', '-', $titleAr)) : '');
         
         $slugEn = $baseEn;
         $slugAr = $baseAr;

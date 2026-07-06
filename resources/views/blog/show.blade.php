@@ -1,7 +1,8 @@
 <x-public-layout>
-    <x-slot name="title">{{ $post->localized_title }} - {{ config('app.name') }}</x-slot>
-    <x-slot name="meta_description">{{ Str::limit($plainText, 160) }}</x-slot>
-    <x-slot name="meta_keywords">blog, news, updates, {{ config('app.name') }}</x-slot>
+    <x-slot name="title">{{ $metaTitle }} - {{ config('app.name') }}</x-slot>
+    <x-slot name="meta_description">{{ $metaDesc }}</x-slot>
+    <x-slot name="meta_keywords">{{ $metaKeys }}</x-slot>
+    <x-slot name="meta_header">{!! $metaHeader !!}</x-slot>
     @if($post->cover_image_url)
         <x-slot name="og_image">{{ Str::startsWith($post->cover_image_url, 'http') ? $post->cover_image_url : asset($post->cover_image_url) }}</x-slot>
     @endif

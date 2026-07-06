@@ -657,5 +657,13 @@
     "tasks": "المهام",
     "to one of the following numbers:": "إلى أحد الأرقام التالية:",
     "to the Binance Pay ID below, or scan the QR code with your mobile Binance App:": "إلى معرف Binance Pay أدناه، أو قم بمسح رمز الاستجابة السريعة باستخدام تطبيق Binance على هاتفك المحمول:",
-    "Read more": "قراءة المزيد"
+    "Read more": "قراءة المزيد",
+    "Custom Slug (English)": "الرابط المخصص (إنجليزي)",
+    "Custom Slug (Arabic)": "الرابط المخصص (عربي)",
+    "Leave empty to auto-generate": "اتركه فارغاً للتوليد التلقائي",
+    "Meta Settings": "إعدادات الميتا (SEO)",
+    "Meta Page Title": "عنوان الصفحة (Meta Title)",
+    "Meta Keywords": "الكلمات المفتاحية (Meta Keywords)",
+    "Meta Description": "الوصف (Meta Description)",
+    "Custom Header Tags (<head>)": "وسوم إضافية في الـ (<head>)"
 }

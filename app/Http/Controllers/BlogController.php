@@ -56,8 +56,14 @@ class BlogController extends Controller
         $locale = app()->getLocale();
         $renderedContent = $renderService->renderHtml($post->content, $locale);
         $plainText = $renderService->getPlainText($post->content, $locale);
+        
+        $fallback = $locale === 'ar' ? 'en' : 'ar';
+        $metaTitle = $post->meta_title[$locale] ?? $post->meta_title[$fallback] ?? $post->localized_title;
+        $metaDesc = $post->meta_description[$locale] ?? $post->meta_description[$fallback] ?? \Illuminate\Support\Str::limit($plainText, 160);
+        $metaKeys = $post->meta_keywords[$locale] ?? $post->meta_keywords[$fallback] ?? 'blog, news, updates, ' . config('app.name');
+        $metaHeader = $post->meta_header ?? '';
             
-        return view('blog.show', compact('post', 'renderedContent', 'plainText'));
+        return view('blog.show', compact('post', 'renderedContent', 'plainText', 'metaTitle', 'metaDesc', 'metaKeys', 'metaHeader'));
     }
 }
 

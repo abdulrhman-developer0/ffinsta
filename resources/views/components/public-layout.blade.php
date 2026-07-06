@@ -24,6 +24,10 @@
     
     <meta property="og:title" content="{{ $title ?? config('app.name') }}">
 
+    @isset($meta_header)
+        {!! $meta_header !!}
+    @endisset
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
