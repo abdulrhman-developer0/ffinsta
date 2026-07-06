@@ -11,10 +11,43 @@ import {
     Bold, Italic, Strikethrough, Underline as UnderlineIcon,
     Heading1, Heading2, Heading3, Heading4, Heading5,
     AlignLeft, AlignCenter, AlignRight, AlignJustify,
-    List, ListOrdered, Quote, ImageIcon, Link as LinkIcon, Unlink, RemoveFormatting, Palette
+    List, ListOrdered, Quote, ImageIcon, Link as LinkIcon, Unlink, RemoveFormatting, Palette, Code
 } from 'lucide-react';
 
-const ColorPickerDropdown = ({ editor, isRtl }) => {
+const __ = (key) => {
+    const isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
+    const dict = {
+        'Text Color': 'لون النص',
+        'Custom Color': 'لون مخصص',
+        'Remove Color': 'إزالة اللون',
+        'Link': 'رابط',
+        'Save': 'حفظ',
+        'Clear Formatting': 'مسح التنسيق',
+        'Bold': 'عريض',
+        'Italic': 'مائل',
+        'Underline': 'تسطير',
+        'Strikethrough': 'يتوسطه خط',
+        'Heading 1': 'ترويسة 1',
+        'Heading 2': 'ترويسة 2',
+        'Heading 3': 'ترويسة 3',
+        'Heading 4': 'ترويسة 4',
+        'Heading 5': 'ترويسة 5',
+        'Paragraph': 'فقرة',
+        'Bullet List': 'قائمة نقطية',
+        'Ordered List': 'قائمة رقمية',
+        'Align Left': 'محاذاة لليسار',
+        'Align Center': 'توسيط',
+        'Align Right': 'محاذاة لليمين',
+        'Align Justify': 'ضبط المحاذاة',
+        'Image': 'صورة',
+        'Blockquote': 'اقتباس',
+        'Code Block': 'كتلة كود',
+        'HTML Source Code': 'كود HTML المصدر'
+    };
+    return isAr ? (dict[key] || key) : key;
+};
+
+const ColorPickerDropdown = ({ editor, isRtl, isHtmlMode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const popoverRef = useRef(null);
 
@@ -42,7 +75,9 @@ const ColorPickerDropdown = ({ editor, isRtl }) => {
             const spaceRight = window.innerWidth - rect.right;
             const spaceLeft = rect.left;
             
-            if (isRtl) {
+            const isDocRtl = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
+            
+            if (isDocRtl) {
                 if (rect.right < 200) {
                     setDropdownStyle({ left: 0, right: 'auto' });
                 } else {
@@ -56,7 +91,7 @@ const ColorPickerDropdown = ({ editor, isRtl }) => {
                 }
             }
         }
-    }, [isOpen, isRtl]);
+    }, [isOpen]);
 
     const currentColor = editor.getAttributes('textStyle').color || '#000000';
 
@@ -65,12 +100,13 @@ const ColorPickerDropdown = ({ editor, isRtl }) => {
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                title="Text Color"
+                title={__('Text Color')}
+                disabled={isHtmlMode}
                 className={`p-1.5 rounded-md flex items-center justify-center transition-colors ${
                     isOpen 
                         ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white' 
                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
-                }`}
+                } ${isHtmlMode ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 <Palette size={15} color={editor.getAttributes('textStyle').color || 'currentColor'} />
             </button>
@@ -102,7 +138,7 @@ const ColorPickerDropdown = ({ editor, isRtl }) => {
                             value={currentColor} 
                             onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
                             className="w-8 h-8 p-0 border border-slate-200 dark:border-slate-600 rounded cursor-pointer shrink-0"
-                            title="Custom Color"
+                            title={__('Custom Color')}
                         />
                         <input 
                             type="text" 
@@ -122,7 +158,7 @@ const ColorPickerDropdown = ({ editor, isRtl }) => {
                         }}
                         className="w-full py-1.5 mt-1 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 rounded transition-colors flex items-center justify-center gap-1"
                     >
-                        <RemoveFormatting size={14} /> Remove Color
+                        <RemoveFormatting size={14} /> {__('Remove Color')}
                     </button>
                 </div>
             )}
@@ -130,7 +166,7 @@ const ColorPickerDropdown = ({ editor, isRtl }) => {
     );
 };
 
-const LinkDropdown = ({ editor }) => {
+const LinkDropdown = ({ editor, isHtmlMode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [url, setUrl] = useState('');
     const popoverRef = useRef(null);
@@ -170,12 +206,13 @@ const LinkDropdown = ({ editor }) => {
             <button
                 type="button"
                 onClick={openDropdown}
-                title="Link"
+                title={__('Link')}
+                disabled={isHtmlMode}
                 className={`p-1.5 rounded-md flex items-center justify-center transition-colors ${
                     editor.isActive('link') || isOpen
                         ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white' 
                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
-                }`}
+                } ${isHtmlMode ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 <LinkIcon size={15} />
             </button>
@@ -200,7 +237,7 @@ const LinkDropdown = ({ editor }) => {
                             onClick={handleSave}
                             className="flex-1 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors"
                         >
-                            Save
+                            {__('Save')}
                         </button>
                         {editor.isActive('link') && (
                             <button 
@@ -218,7 +255,53 @@ const LinkDropdown = ({ editor }) => {
     );
 };
 
-const MenuBar = ({ editor, isRtl }) => {
+const formatHTML = (html) => {
+    let formatted = '';
+    let indent = 0;
+    const tab = '    ';
+    html.split(/>\s*</).forEach(function(element) {
+        if (element.match(/^\/\w/)) {
+            indent -= 1;
+        }
+        formatted += tab.repeat(Math.max(0, indent)) + '<' + element + '>\n';
+        if (element.match(/^<?\w[^>]*[^\/]$/) && !element.startsWith("input") && !element.startsWith("img") && !element.startsWith("br")) {
+            indent += 1;
+        }
+    });
+    return formatted.substring(1, formatted.length - 2); // trim extra < >
+};
+
+const CodeEditor = ({ value, onChange, isRtl }) => {
+    const lineCount = value.split('\n').length;
+    const lines = Array.from({ length: Math.max(lineCount, 1) }, (_, i) => i + 1);
+    
+    // Calculate height based on lines. 24px per line + 48px padding (py-6 is 24px top and bottom).
+    const calculatedHeight = Math.max(lineCount * 24 + 48, 500);
+
+    return (
+        <div 
+            className="relative flex w-full bg-slate-50 dark:bg-slate-900/40 font-mono text-sm leading-relaxed" 
+            dir="ltr"
+            style={{ height: `${calculatedHeight}px` }}
+        >
+            <div 
+                className="py-6 px-4 text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800/50 text-right select-none border-r border-slate-200 dark:border-slate-700/80 shrink-0"
+            >
+                {lines.map(line => <div key={line} className="h-[24px] leading-[24px]">{line}</div>)}
+            </div>
+            <textarea 
+                className="flex-1 w-full h-full p-6 bg-transparent text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-0 resize-none whitespace-pre font-mono leading-[24px] overflow-x-auto overflow-y-hidden"
+                value={value}
+                onChange={onChange}
+                dir="ltr"
+                spellCheck="false"
+                wrap="off"
+            />
+        </div>
+    );
+};
+
+const MenuBar = ({ editor, isRtl, isHtmlMode, onToggleHtml }) => {
     if (!editor) {
         return null;
     }
@@ -273,95 +356,102 @@ const MenuBar = ({ editor, isRtl }) => {
     return (
         <div className="flex flex-col bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-lg select-none">
             {/* Top Toolbar */}
-            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-slate-200 dark:border-slate-700/80" dir={isRtl ? 'rtl' : 'ltr'}>
+            <div className="flex flex-wrap items-center gap-1.5 p-1.5 border-b border-slate-200 dark:border-slate-700/80">
                 
                 {/* Format Clear */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
-                    <Button onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear Formatting">
+                    <Button onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title={__('Clear Formatting')} disabled={isHtmlMode}>
                         <RemoveFormatting size={15} />
                     </Button>
                 </div>
                 
                 {/* Basic Text Formatting */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
-                    <Button onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold">
+                    <Button onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title={__('Bold')} disabled={isHtmlMode}>
                         <Bold size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} title="Italic">
+                    <Button onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} title={__('Italic')} disabled={isHtmlMode}>
                         <Italic size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} title="Underline">
+                    <Button onClick={() => editor.chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} title={__('Underline')} disabled={isHtmlMode}>
                         <UnderlineIcon size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} title="Strikethrough">
+                    <Button onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} title={__('Strikethrough')} disabled={isHtmlMode}>
                         <Strikethrough size={15} />
                     </Button>
                 </div>
 
                 {/* Headings */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
-                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} title="Heading 1">
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} title={__('Heading 1')} disabled={isHtmlMode}>
                         <Heading1 size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} isActive={editor.isActive('heading', { level: 3 })} title="Heading 2">
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} isActive={editor.isActive('heading', { level: 3 })} title={__('Heading 2')} disabled={isHtmlMode}>
                         <Heading2 size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()} isActive={editor.isActive('heading', { level: 4 })} title="Heading 3">
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()} isActive={editor.isActive('heading', { level: 4 })} title={__('Heading 3')} disabled={isHtmlMode}>
                         <Heading3 size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()} isActive={editor.isActive('heading', { level: 5 })} title="Heading 4">
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()} isActive={editor.isActive('heading', { level: 5 })} title={__('Heading 4')} disabled={isHtmlMode}>
                         <Heading4 size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()} isActive={editor.isActive('heading', { level: 6 })} title="Heading 5">
+                    <Button onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()} isActive={editor.isActive('heading', { level: 6 })} title={__('Heading 5')} disabled={isHtmlMode}>
                         <Heading5 size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().setParagraph().run()} isActive={editor.isActive('paragraph')} title="Paragraph">
+                    <Button onClick={() => editor.chain().focus().setParagraph().run()} isActive={editor.isActive('paragraph')} title={__('Paragraph')} disabled={isHtmlMode}>
                         <span className="text-[13px] font-bold leading-none px-0.5">P</span>
                     </Button>
                 </div>
 
                 {/* Lists */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
-                    <Button onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title="Bullet List">
+                    <Button onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title={__('Bullet List')} disabled={isHtmlMode}>
                         <List size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title="Ordered List">
+                    <Button onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title={__('Ordered List')} disabled={isHtmlMode}>
                         <ListOrdered size={15} />
                     </Button>
                 </div>
 
                 {/* Alignment */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm">
-                    <Button onClick={() => editor.chain().focus().setTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })} title="Align Left">
+                    <Button onClick={() => editor.chain().focus().setTextAlign('left').run()} isActive={editor.isActive({ textAlign: 'left' })} title={__('Align Left')} disabled={isHtmlMode}>
                         <AlignLeft size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().setTextAlign('center').run()} isActive={editor.isActive({ textAlign: 'center' })} title="Align Center">
+                    <Button onClick={() => editor.chain().focus().setTextAlign('center').run()} isActive={editor.isActive({ textAlign: 'center' })} title={__('Align Center')} disabled={isHtmlMode}>
                         <AlignCenter size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().setTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })} title="Align Right">
+                    <Button onClick={() => editor.chain().focus().setTextAlign('right').run()} isActive={editor.isActive({ textAlign: 'right' })} title={__('Align Right')} disabled={isHtmlMode}>
                         <AlignRight size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().setTextAlign('justify').run()} isActive={editor.isActive({ textAlign: 'justify' })} title="Align Justify">
+                    <Button onClick={() => editor.chain().focus().setTextAlign('justify').run()} isActive={editor.isActive({ textAlign: 'justify' })} title={__('Align Justify')} disabled={isHtmlMode}>
                         <AlignJustify size={15} />
                     </Button>
                 </div>
 
                 {/* Colors */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm z-50">
-                    <ColorPickerDropdown editor={editor} isRtl={isRtl} />
+                    <ColorPickerDropdown editor={editor} isRtl={isRtl} isHtmlMode={isHtmlMode} />
                 </div>
 
                 {/* Media, Blockquote & Code */}
                 <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm z-50">
-                    <LinkDropdown editor={editor} />
-                    <Button onClick={addImage} title="Image">
+                    <LinkDropdown editor={editor} isHtmlMode={isHtmlMode} />
+                    <Button onClick={addImage} title={__('Image')} disabled={isHtmlMode}>
                         <ImageIcon size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} title="Blockquote">
+                    <Button onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} title={__('Blockquote')} disabled={isHtmlMode}>
                         <Quote size={15} />
                     </Button>
-                    <Button onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} title="Code Block">
+                    <Button onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} title={__('Code Block')} disabled={isHtmlMode}>
                         <span className="text-[12px] px-1 font-mono font-bold">&lt;/&gt;</span>
+                    </Button>
+                </div>
+
+                {/* HTML Source Mode Toggle */}
+                <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md p-0.5 shadow-sm ms-auto">
+                    <Button onClick={onToggleHtml} isActive={isHtmlMode} title={__('HTML Source Code')}>
+                        <Code size={15} />
                     </Button>
                 </div>
             </div>
@@ -371,6 +461,8 @@ const MenuBar = ({ editor, isRtl }) => {
 
 export default function PostEditor({ initialDataEn, initialDataAr }) {
     const [lang, setLang] = useState('en');
+    const [htmlMode, setHtmlMode] = useState({ en: false, ar: false });
+    const [htmlContent, setHtmlContent] = useState({ en: '', ar: '' });
 
     const parseInitial = (data) => {
         if (!data || data === '{}' || data === '[]') return '';
@@ -433,6 +525,27 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
     });
 
     useEffect(() => {
+        const form = document.querySelector('form');
+        if (!form) return;
+
+        const handleFormSubmit = () => {
+            if (htmlMode.en && editorEn) {
+                editorEn.commands.setContent(htmlContent.en);
+                const inputEn = document.getElementById('content_en');
+                if (inputEn) inputEn.value = JSON.stringify(editorEn.getJSON());
+            }
+            if (htmlMode.ar && editorAr) {
+                editorAr.commands.setContent(htmlContent.ar);
+                const inputAr = document.getElementById('content_ar');
+                if (inputAr) inputAr.value = JSON.stringify(editorAr.getJSON());
+            }
+        };
+
+        form.addEventListener('submit', handleFormSubmit);
+        return () => form.removeEventListener('submit', handleFormSubmit);
+    }, [htmlMode, htmlContent, editorEn, editorAr]);
+
+    useEffect(() => {
         const ensureInput = (id, name) => {
             let input = document.getElementById(id);
             if (!input) {
@@ -448,13 +561,13 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
         const inputEn = ensureInput('content_en', 'content[en]');
         const inputAr = ensureInput('content_ar', 'content[ar]');
 
-        if (editorEn && parsedEn) {
+        if (editorEn && parsedEn && !htmlMode.en) {
              inputEn.value = JSON.stringify(editorEn.getJSON());
         }
-        if (editorAr && parsedAr) {
+        if (editorAr && parsedAr && !htmlMode.ar) {
              inputAr.value = JSON.stringify(editorAr.getJSON());
         }
-    }, [editorEn, editorAr]);
+    }, [editorEn, editorAr, htmlMode]);
 
     const handleSwitchLang = (newLang) => {
         setLang(newLang);
@@ -489,17 +602,61 @@ export default function PostEditor({ initialDataEn, initialDataAr }) {
                 </div>
             </div>
 
-            <div style={{ display: lang === 'en' ? 'block' : 'none' }} className="border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden bg-white dark:bg-slate-800">
-                <MenuBar editor={editorEn} isRtl={false} />
-                <div className="max-h-[700px] overflow-y-auto bg-transparent">
-                    <EditorContent editor={editorEn} className="bg-transparent dark:bg-transparent" />
+            <div style={{ display: lang === 'en' ? 'block' : 'none' }} className="border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden bg-white dark:bg-slate-800 flex flex-col">
+                <MenuBar 
+                    editor={editorEn} 
+                    isRtl={false} 
+                    isHtmlMode={htmlMode.en}
+                    onToggleHtml={() => {
+                        if (!htmlMode.en) {
+                            setHtmlContent(prev => ({...prev, en: formatHTML(editorEn.getHTML())}));
+                        } else {
+                            editorEn.commands.setContent(htmlContent.en);
+                            const inputEn = document.getElementById('content_en');
+                            if (inputEn) inputEn.value = JSON.stringify(editorEn.getJSON());
+                        }
+                        setHtmlMode(prev => ({...prev, en: !prev.en}));
+                    }}
+                />
+                <div className="flex-1 max-h-[700px] overflow-y-auto bg-transparent relative border-t border-slate-200 dark:border-slate-700/80">
+                    {htmlMode.en ? (
+                        <CodeEditor 
+                            value={htmlContent.en}
+                            onChange={(e) => setHtmlContent(prev => ({...prev, en: e.target.value}))}
+                            isRtl={false}
+                        />
+                    ) : (
+                        <EditorContent editor={editorEn} className="bg-transparent dark:bg-transparent min-h-[500px]" />
+                    )}
                 </div>
             </div>
             
-            <div style={{ display: lang === 'ar' ? 'block' : 'none' }} className="border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden bg-white dark:bg-slate-800">
-                <MenuBar editor={editorAr} isRtl={true} />
-                <div className="max-h-[700px] overflow-y-auto bg-transparent" dir="rtl">
-                    <EditorContent editor={editorAr} className="bg-transparent dark:bg-transparent" />
+            <div style={{ display: lang === 'ar' ? 'block' : 'none' }} className="border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden bg-white dark:bg-slate-800 flex flex-col">
+                <MenuBar 
+                    editor={editorAr} 
+                    isRtl={true} 
+                    isHtmlMode={htmlMode.ar}
+                    onToggleHtml={() => {
+                        if (!htmlMode.ar) {
+                            setHtmlContent(prev => ({...prev, ar: formatHTML(editorAr.getHTML())}));
+                        } else {
+                            editorAr.commands.setContent(htmlContent.ar);
+                            const inputAr = document.getElementById('content_ar');
+                            if (inputAr) inputAr.value = JSON.stringify(editorAr.getJSON());
+                        }
+                        setHtmlMode(prev => ({...prev, ar: !prev.ar}));
+                    }}
+                />
+                <div className="flex-1 max-h-[700px] overflow-y-auto bg-transparent relative border-t border-slate-200 dark:border-slate-700/80" dir={htmlMode.ar ? "ltr" : "rtl"}>
+                    {htmlMode.ar ? (
+                        <CodeEditor 
+                            value={htmlContent.ar}
+                            onChange={(e) => setHtmlContent(prev => ({...prev, ar: e.target.value}))}
+                            isRtl={true}
+                        />
+                    ) : (
+                        <EditorContent editor={editorAr} className="bg-transparent dark:bg-transparent min-h-[500px]" />
+                    )}
                 </div>
             </div>
         </div>
