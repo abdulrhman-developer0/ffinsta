@@ -210,16 +210,30 @@
                 </div>
 
                 <!-- Meta Keywords -->
-                <div class="form-group">
+                <div class="form-group" x-data="tagsInput({ en: '{{ old('meta_keywords.en') }}', ar: '{{ old('meta_keywords.ar') }}' })">
                     <label class="form-label">{{ __('Meta Keywords') }}</label>
-                    <input x-show="metaLang === 'en'" type="text" name="meta_keywords[en]"
-                        value="{{ old('meta_keywords.en') }}"
-                        class="form-input rounded-xl border-slate-200 dark:border-slate-600"
-                        placeholder="keyword1, keyword2...">
-                    <input x-show="metaLang === 'ar'" style="display: none;" type="text" name="meta_keywords[ar]"
-                        value="{{ old('meta_keywords.ar') }}"
-                        class="form-input rounded-xl border-slate-200 dark:border-slate-600" dir="rtl"
-                        placeholder="كلمة1, كلمة2...">
+                    <input type="hidden" name="meta_keywords[en]" x-bind:value="tags.en.join(',')">
+                    <input type="hidden" name="meta_keywords[ar]" x-bind:value="tags.ar.join(',')">
+
+                    <div x-show="metaLang === 'en'" class="form-input rounded-xl border-slate-200 dark:border-slate-600 flex flex-wrap gap-2 p-2 items-center focus-within:ring-2 focus-within:ring-brand-500 min-h-[46px] cursor-text" @click="$refs.enInput.focus()">
+                        <template x-for="(tag, index) in tags.en" :key="index">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-brand-50 text-brand-600 dark:bg-brand-500/20 dark:text-brand-300 rounded-lg text-sm font-semibold">
+                                <span x-text="tag"></span>
+                                <button type="button" @click.stop="removeTag('en', index)" class="hover:text-brand-800 dark:hover:text-brand-100">&times;</button>
+                            </span>
+                        </template>
+                        <input type="text" x-ref="enInput" @keydown.enter.prevent="addTag('en', $event)" @keydown.comma.prevent="addTag('en', $event)" class="flex-1 bg-transparent border-none focus:ring-0 p-0 text-sm min-w-[120px]" placeholder="Type keyword and press Enter...">
+                    </div>
+
+                    <div x-show="metaLang === 'ar'" style="display: none;" class="form-input rounded-xl border-slate-200 dark:border-slate-600 flex flex-wrap gap-2 p-2 items-center focus-within:ring-2 focus-within:ring-brand-500 min-h-[46px] cursor-text" dir="rtl" @click="$refs.arInput.focus()">
+                        <template x-for="(tag, index) in tags.ar" :key="index">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-brand-50 text-brand-600 dark:bg-brand-500/20 dark:text-brand-300 rounded-lg text-sm font-semibold">
+                                <span x-text="tag"></span>
+                                <button type="button" @click.stop="removeTag('ar', index)" class="hover:text-brand-800 dark:hover:text-brand-100">&times;</button>
+                            </span>
+                        </template>
+                        <input type="text" x-ref="arInput" @keydown.enter.prevent="addTag('ar', $event)" @keydown.comma.prevent="addTag('ar', $event)" class="flex-1 bg-transparent border-none focus:ring-0 p-0 text-sm min-w-[120px]" placeholder="اكتب الكلمة واضغط إنتر...">
+                    </div>
                 </div>
 
                 <!-- Meta Description -->
@@ -339,4 +353,24 @@
         div.innerText = 'Promise Rejection: ' + (e.reason && e.reason.stack ? e.reason.stack : e.reason);
         document.body.appendChild(div);
     });
+    
+    function tagsInput(initialTags = {en: '', ar: ''}) {
+        return {
+            tags: {
+                en: initialTags.en ? initialTags.en.split(',').map(t => t.trim()).filter(t => t) : [],
+                ar: initialTags.ar ? initialTags.ar.split(',').map(t => t.trim()).filter(t => t) : []
+            },
+            addTag(lang, event) {
+                const value = event.target.value.trim();
+                const cleanValue = value.replace(/,$/, '');
+                if (cleanValue && !this.tags[lang].includes(cleanValue)) {
+                    this.tags[lang].push(cleanValue);
+                }
+                event.target.value = '';
+            },
+            removeTag(lang, index) {
+                this.tags[lang].splice(index, 1);
+            }
+        }
+    }
 </script>

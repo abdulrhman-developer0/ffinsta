@@ -177,7 +177,7 @@ class PostRenderService
                 return "<code>{$text}</code>";
             case 'link':
                 $href = $attrs['href'] ?? '#';
-                $target = $attrs['target'] ?? '_blank';
+                $target = '_blank';
                 return "<a href=\"{$href}\" target=\"{$target}\" rel=\"noopener noreferrer\" class=\"text-brand-600 hover:text-brand-700 underline\">{$text}</a>";
             case 'textStyle':
                 $color = $attrs['color'] ?? null;
