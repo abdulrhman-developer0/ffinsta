@@ -176,7 +176,13 @@ class PostRenderService
             case 'code':
                 return "<code>{$text}</code>";
             case 'link':
-                $href = $attrs['href'] ?? '#';
+                $href = !empty($attrs['href']) ? $attrs['href'] : '#';
+                
+                // Ensure absolute URL for external links if missing protocol
+                if ($href !== '#' && !preg_match('~^(?:f|ht)tps?://~i', $href) && strpos($href, 'mailto:') !== 0 && strpos($href, 'tel:') !== 0 && strpos($href, '/') !== 0) {
+                    $href = 'https://' . $href;
+                }
+
                 $target = '_blank';
                 return "<a href=\"{$href}\" target=\"{$target}\" rel=\"noopener noreferrer\" class=\"text-brand-600 hover:text-brand-700 underline\">{$text}</a>";
             case 'textStyle':
