@@ -19,6 +19,7 @@ class AdminSeeder extends Seeder
                 'points'        => 0,
                 'referral_code' => strtoupper(Str::random(8)),
                 'is_suspended'  => false,
+                'permissions'   => ['users', 'admins', 'orders', 'instagram', 'coupons', 'payments', 'posts', 'faqs', 'logs', 'settings'],
             ]
         );
     }
