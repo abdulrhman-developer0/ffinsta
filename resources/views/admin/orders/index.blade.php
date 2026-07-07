@@ -52,7 +52,7 @@
                                 <div class="progress-bar w-20">
                                     <div class="progress-fill" style="width: {{ $order->progressPercent() }}%"></div>
                                 </div>
-                                <p class="text-[10px] text-muted mt-0.5">{{ $order->delivered_qty }}/{{ $order->requested_qty }}</p>
+                                <p class="text-[10px] text-muted mt-0.5">{{ $order->displayDeliveredQty() }}/{{ $order->requested_qty }}</p>
                             </td>
                             <td>
                                 <form method="POST" action="{{ route('admin.orders.toggle-priority', $order) }}">

@@ -109,7 +109,7 @@
                             <tr>
                                 <td class="font-mono text-xs font-semibold">{{ $order->order_number }}</td>
                                 <td>{{ '@' . $order->instagram_username }}</td>
-                                <td>{{ $order->delivered_qty }}/{{ $order->requested_qty }}</td>
+                                <td>{{ $order->displayDeliveredQty() }}/{{ $order->requested_qty }}</td>
                                 <td><span class="badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span></td>
                                 <td class="text-muted text-xs">{{ $order->created_at->format('M d') }}</td>
                                 <td>

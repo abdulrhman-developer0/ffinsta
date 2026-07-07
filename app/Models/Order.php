@@ -47,10 +47,18 @@ class Order extends Model
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
+    public function displayDeliveredQty(): int
+    {
+        if ($this->isCompleted()) {
+            return $this->requested_qty;
+        }
+        return $this->delivered_qty;
+    }
+
     public function progressPercent(): int
     {
         if ($this->requested_qty === 0) return 0;
-        return (int) min(100, round(($this->delivered_qty / $this->requested_qty) * 100));
+        return (int) min(100, round(($this->displayDeliveredQty() / $this->requested_qty) * 100));
     }
 
     public function isCompleted(): bool

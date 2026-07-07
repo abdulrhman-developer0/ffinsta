@@ -118,7 +118,7 @@
                             <td>{{ $order->user->name }}</td>
                             <td>{{ '@' . $order->instagram_username }}</td>
                             <td>{{ number_format($order->requested_qty) }}</td>
-                            <td>{{ number_format($order->delivered_qty) }}</td>
+                            <td>{{ number_format($order->displayDeliveredQty()) }}</td>
                             <td><span class="badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span></td>
                             <td class="text-muted text-xs">{{ $order->created_at->format('M d, H:i') }}</td>
                             <td>

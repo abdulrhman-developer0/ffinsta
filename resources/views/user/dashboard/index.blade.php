@@ -105,7 +105,7 @@
                         <div class="mt-1.5 progress-bar">
                             <div class="progress-fill" style="width: {{ $order->progressPercent() }}%"></div>
                         </div>
-                        <p class="text-[10px] text-muted mt-1">{{ $order->delivered_qty }} / {{ $order->requested_qty }} {{ __('followers') }}</p>
+                        <p class="text-[10px] text-muted mt-1">{{ $order->displayDeliveredQty() }} / {{ $order->requested_qty }} {{ __('followers') }}</p>
                     </div>
                 </div>
             @empty

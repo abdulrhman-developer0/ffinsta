@@ -41,7 +41,7 @@
                             <td class="font-mono text-xs font-semibold text-primary">{{ $order->order_number }}</td>
                             <td>{{ '@' . $order->instagram_username }}</td>
                             <td>{{ number_format($order->requested_qty) }}</td>
-                            <td>{{ number_format($order->delivered_qty) }}</td>
+                            <td>{{ number_format($order->displayDeliveredQty()) }}</td>
                             <td class="min-w-[100px]">
                                 <div class="progress-bar">
                                     <div class="progress-fill" style="width: {{ $order->progressPercent() }}%"></div>

@@ -18,7 +18,7 @@
                 <div class="mb-4">
                     <div class="flex justify-between text-sm mb-1">
                         <span class="text-muted">{{ __('Progress') }}</span>
-                        <span class="font-semibold text-primary">{{ $order->delivered_qty }}/{{ $order->requested_qty }}</span>
+                        <span class="font-semibold text-primary">{{ $order->displayDeliveredQty() }}/{{ $order->requested_qty }}</span>
                     </div>
                     <div class="progress-bar h-3">
                         <div class="progress-fill" style="width: {{ $order->progressPercent() }}%"></div>
