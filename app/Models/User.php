@@ -24,6 +24,7 @@ class User extends Authenticatable implements HasMedia
         'referral_code',
         'referred_by',
         'is_suspended',
+        'permissions',
     ];
 
     protected $hidden = [
@@ -38,6 +39,7 @@ class User extends Authenticatable implements HasMedia
             'password'          => 'hashed',
             'is_suspended'      => 'boolean',
             'points'            => 'integer',
+            'permissions'       => 'array',
         ];
     }
 
@@ -58,6 +60,16 @@ class User extends Authenticatable implements HasMedia
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->id === 1) {
+            return true;
+        }
+        
+        $perms = $this->permissions ?? [];
+        return in_array($permission, $perms) || in_array('all', $perms);
     }
 
     public function isSuspended(): bool

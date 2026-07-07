@@ -20,9 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin'     => \App\Http\Middleware\AdminMiddleware::class,
-            'suspended' => \App\Http\Middleware\SuspendedUserMiddleware::class,
-            'locale'    => \App\Http\Middleware\LocaleMiddleware::class,
+            'admin'            => \App\Http\Middleware\AdminMiddleware::class,
+            'admin_permission' => \App\Http\Middleware\CheckAdminPermission::class,
+            'suspended'        => \App\Http\Middleware\SuspendedUserMiddleware::class,
+            'locale'           => \App\Http\Middleware\LocaleMiddleware::class,
         ]);
 
         $middleware->appendToGroup('web', [
