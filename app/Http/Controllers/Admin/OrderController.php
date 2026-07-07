@@ -181,4 +181,15 @@ class OrderController extends Controller
 
         return redirect()->route('admin.orders.index')->with('success', __('Order deleted.'));
     }
+
+    public function togglePriority(Order $order)
+    {
+        $order->update([
+            'priority' => $order->priority === 'high' ? 'normal' : 'high'
+        ]);
+        
+        $this->activityLogService->log('update_order', "Toggled priority to {$order->priority} for order #{$order->order_number}", 'order', $order->id);
+
+        return back()->with('success', __('Order priority updated.'));
+    }
 }

@@ -52,7 +52,7 @@ class EarnPointsController extends Controller
                 $query->whereNotIn('instagram_username', $excludeUsernames);
             }
 
-            $availableOrders = $query->inRandomOrder()->limit(5)->get();
+            $availableOrders = $query->orderByRaw("priority = 'high' DESC")->inRandomOrder()->limit(5)->get();
         }
 
         $userAccounts = InstagramAccount::where('user_id', $user->id)

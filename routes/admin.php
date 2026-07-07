@@ -37,6 +37,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
         Route::post('/{order}/activate', [OrderController::class, 'activate'])->name('activate');
         Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+        Route::post('/{order}/toggle-priority', [OrderController::class, 'togglePriority'])->name('toggle-priority');
     });
 
     // Instagram Accounts
