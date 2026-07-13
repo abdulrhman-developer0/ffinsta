@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
+use Coderflex\LaravelTurnstile\Rules\TurnstileCheck;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -56,6 +57,10 @@ class RegisteredUserController extends Controller
             'email'         => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password'      => ['required', 'confirmed', Rules\Password::defaults()],
             'referral_code' => ['nullable', 'string', 'max:20'],
+            'cf-turnstile-response' => [
+                'required',
+                new TurnstileCheck(),
+            ],
         ]);
 
         // Resolve referrer

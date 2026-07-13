@@ -146,6 +146,12 @@ body {
     .form-input::placeholder {
         color: var(--text-muted);
     }
+    .form-checkbox {
+        @apply rounded border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-dark-900;
+        background-color: var(--bg-primary);
+        border-color: var(--border-color);
+        color: var(--brand-500);
+    }
     .form-label {
         @apply block text-sm font-medium mb-1.5;
         color: var(--text-secondary);
@@ -384,5 +390,10 @@ body {
                       radial-gradient(at 100% 0%, rgba(15, 23, 42, 0.8) 0px, transparent 55%);
 }
 
-
+@media (max-width: 640px) {
+    .cf-turnstile iframe {
+        transform: scale(0.9);
+        width: 100%;
+    }
+}
 

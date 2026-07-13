@@ -6,16 +6,25 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\SettingService;
 
 class LocaleMiddleware
 {
+    public function __construct(
+        protected SettingService $settingService
+    ) {}
+
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = session('locale', config('app.locale', 'en'));
+        $defaultLocale = $this->settingService->get(
+            'default_language',
+            config('app.locale', 'en')
+        );
 
-        // Validate locale is supported
+        $locale = session('locale', $defaultLocale);
+
         if (!in_array($locale, ['en', 'ar'])) {
-            $locale = 'en';
+            $locale = $defaultLocale;
         }
 
         App::setLocale($locale);

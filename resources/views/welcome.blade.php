@@ -386,12 +386,37 @@
     <!-- ===== HOW IT WORKS ===== -->
     <section id="how-it-works" class="py-28 px-6 relative">
         <div class="max-w-5xl mx-auto">
+    
             <div class="text-center mb-20">
-                <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">{{ __('How It Works') }}</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-lg max-w-xl mx-auto">{{ __('Three simple steps to start growing your organic Instagram audience') }}</p>
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">
+                    {{ __('How It Works') }}
+                </h2>
+    
+                <p class="text-slate-500 dark:text-slate-400 text-lg max-w-xl mx-auto">
+                    {{ __('Three simple steps to start growing your organic Instagram audience') }}
+                </p>
             </div>
-
+    
+            <!-- Video Tutorial -->
+            <div class="w-full mb-16">
+                <div class="overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-900">
+            
+                    <div class="relative w-full overflow-hidden" style="padding-bottom:56.25%;">
+                        <iframe
+                            class="absolute top-0 left-0 w-full h-full"
+                            src="https://www.youtube.com/embed/k7SsfMgYVTc"
+                            title="Watch Tutorial Video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Steps -->
             <div class="grid md:grid-cols-3 gap-8 relative">
+    
                 @foreach([
                     [
                         'step' => '01',
@@ -412,17 +437,33 @@
                         'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>'
                     ]
                 ] as $item)
+    
                     <div class="card-premium-glow rounded-3xl p-8 text-center flex flex-col items-center">
                         <div class="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-950/20 text-brand-500 flex items-center justify-center mb-6 shadow-sm border border-brand-100/30 dark:border-brand-900/30">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="w-8 h-8"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
                                 {!! $item['svg'] !!}
                             </svg>
                         </div>
-                        <span class="text-xs font-bold text-brand-500 uppercase tracking-widest mb-3 bg-brand-50 dark:bg-brand-950/20 px-3 py-1 rounded-full">{{ __('Step') }} {{ $item['step'] }}</span>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">{{ __($item['title']) }}</h3>
-                        <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{{ __($item['desc']) }}</p>
+    
+                        <span class="text-xs font-bold text-brand-500 uppercase tracking-widest mb-3 bg-brand-50 dark:bg-brand-950/20 px-3 py-1 rounded-full">
+                            {{ __('Step') }} {{ $item['step'] }}
+                        </span>
+    
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                            {{ __($item['title']) }}
+                        </h3>
+    
+                        <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">
+                            {{ __($item['desc']) }}
+                        </p>
                     </div>
+    
                 @endforeach
+    
             </div>
         </div>
     </section>

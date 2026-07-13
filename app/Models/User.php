@@ -21,6 +21,7 @@ class User extends Authenticatable implements HasMedia
         'password',
         'role',
         'points',
+        'google_id',
         'referral_code',
         'referred_by',
         'is_suspended',

@@ -45,6 +45,7 @@
                             $availablePermissions = [
                                 'users'     => __('Users Management'),
                                 'admins'    => __('Admins Management'),
+                                'referrals' => __ ('Referrals Management'),
                                 'orders'    => __('Orders Management'),
                                 'instagram' => __('Instagram Accounts'),
                                 'coupons'   => __('Coupons'),
@@ -60,7 +61,7 @@
                         @foreach($availablePermissions as $key => $label)
                             <label class="flex items-center gap-2 cursor-pointer {{ $admin->id === 1 ? 'opacity-60 cursor-not-allowed' : '' }}">
                                 <input type="checkbox" name="permissions[]" value="{{ $key }}" 
-                                    class="form-checkbox text-primary rounded"
+                                    class="form-checkbox rounded"
                                     {{ in_array($key, $currentPerms) || $admin->id === 1 ? 'checked' : '' }}
                                     {{ $admin->id === 1 ? 'disabled' : '' }}>
                                 <span class="text-sm">{{ $label }}</span>

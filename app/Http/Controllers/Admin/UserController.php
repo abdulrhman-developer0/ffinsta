@@ -18,6 +18,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::where('role', 'user')
+            ->withCount('referrals')
             ->when($request->search, fn($q, $s) => $q->where('name', 'like', "%$s%")
                 ->orWhere('email', 'like', "%$s%"))
             ->when($request->status === 'suspended', fn($q) => $q->where('is_suspended', true))
@@ -25,7 +26,7 @@ class UserController extends Controller
             ->latest()
             ->paginate(20)
             ->withQueryString();
-
+            
         return view('admin.users.index', compact('users'));
     }
 

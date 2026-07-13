@@ -21,6 +21,7 @@
                     <tr>
                         <th>{{ __('User') }}</th>
                         <th>{{ __('Points') }}</th>
+                        <th>{{ __('Referrals') }}</th>
                         <th>{{ __('Orders') }}</th>
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Joined') }}</th>
@@ -32,11 +33,30 @@
                         <tr>
                             <td>
                                 <div>
-                                    <p class="font-semibold text-primary">{{ $user->name }}</p>
+                                    <p class="font-semibold text-primary flex items-center gap-2">
+                                        {{ $user->name }}
+                                        
+                                        @if($user->google_id)
+                                            <span title="Google Account" class="text-green-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     class="w-4 h-4"
+                                                     fill="none"
+                                                     viewBox="0 0 24 24"
+                                                     stroke="currentColor"
+                                                     stroke-width="2">
+                                                    <path stroke-linecap="round"
+                                                          stroke-linejoin="round"
+                                                          d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </span>
+                                        @endif
+                                        
+                                    </p>
                                     <p class="text-xs text-muted">{{ $user->email }}</p>
                                 </div>
                             </td>
                             <td class="font-semibold text-primary">{{ number_format($user->points) }}</td>
+                            <td>{{ $user->referrals_count }}</td>
                             <td>{{ $user->orders_count ?? 0 }}</td>
                             <td>
                                 @if($user->is_suspended)

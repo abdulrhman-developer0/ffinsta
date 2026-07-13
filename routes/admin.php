@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\InstagramAccountController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\ReferralController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -28,6 +29,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
         Route::post('/{user}/adjust-points', [UserController::class, 'adjustPoints'])->name('adjust-points');
         Route::post('/{user}/impersonate', [UserController::class, 'impersonate'])->name('impersonate');
+    });
+    
+    // Referrals
+    Route::prefix('referrals')->middleware('admin_permission:referrals')->name('referrals.')->group(function () {
+    
+        Route::get('/', [ReferralController::class, 'index'])
+            ->name('index');
+    
+        Route::get('/{user}', [ReferralController::class, 'show'])
+            ->name('show');
     });
 
     // Admins

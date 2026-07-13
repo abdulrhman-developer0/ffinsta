@@ -454,6 +454,7 @@
     "Redeem a Coupon": "استرداد قسيمة",
     "Redemption History": "تاريخ الفداء",
     "Referral": "الإحالة",
+    "Referrals Management": "إدارة الإحالة",
     "Referral Bonus": "مكافأة الإحالة",
     "Referral Bonus Points": "نقاط الإحالة الإضافية",
     "Referral Code": "رمز الإحالة",
@@ -682,5 +683,7 @@
     "Users Management": "إدارة المستخدمين",
     "Orders Management": "إدارة الطلبات",
     "System Logs": "سجل النظام",
-    "This is the main administrator account. It automatically has all permissions.": "هذا هو حساب المشرف الرئيسي. يمتلك هذا الحساب كافة الصلاحيات بشكل تلقائي."
+    "This is the main administrator account. It automatically has all permissions.": "هذا هو حساب المشرف الرئيسي. يمتلك هذا الحساب كافة الصلاحيات بشكل تلقائي.",
+    "Sign up with Google": "تسجيل الدخول عن طريق جوجل",
+    "Total Bonus": "إجمالي المكافأة"
 }

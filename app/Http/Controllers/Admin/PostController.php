@@ -24,6 +24,10 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+        // dd([
+    //     'data' => $request->all(),
+    //     'files' => $request->allFiles(),
+    // ]);
         $tipTapRule = function ($attribute, $value, $fail) {
             if (!$value) return;
             $data = is_string($value) ? json_decode($value, true) : $value;

@@ -88,6 +88,16 @@
                     {{ __('Users') }}
                 </a>
             @endif
+            
+            @if(auth()->user()->hasPermission('referrals'))
+                <a href="{{ route('admin.referrals.index') }}"
+                   class="sidebar-link {{ request()->routeIs('admin.referrals*') ? 'active' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4H2v16h5m10 0v-2a4 4 0 00-8 0v2m8 0H9m8-10a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    {{ __('Referrals') }}
+                </a>
+            @endif
 
             @if(auth()->user()->hasPermission('admins'))
                 <a href="{{ route('admin.admins.index') }}"
