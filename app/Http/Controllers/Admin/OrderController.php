@@ -19,6 +19,10 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
+        if (!$request->has('priority')) {
+            $request->merge(['priority' => 'normal']);
+        }
+
         $orders = Order::with('user', 'instagramAccount')
             ->when($request->search, fn($q, $s) => $q->where('order_number', 'like', "%$s%")
                 ->orWhere('instagram_username', 'like', "%$s%")
