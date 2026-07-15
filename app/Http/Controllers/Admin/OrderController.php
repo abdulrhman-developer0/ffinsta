@@ -26,7 +26,7 @@ class OrderController extends Controller
             ->when($request->status, fn($q, $status) => $q->where('status', $status))
             ->when($request->priority, fn($q, $p) => $q->where('priority', $p))
             ->orderByRaw("priority = 'high' DESC")
-            ->orderBy('updated_at', 'desc')
+            ->orderByRaw("CASE WHEN priority = 'high' THEN updated_at ELSE created_at END DESC")
             ->paginate(20)
             ->withQueryString();
 
