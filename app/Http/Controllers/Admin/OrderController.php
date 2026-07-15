@@ -25,7 +25,8 @@ class OrderController extends Controller
                 ->orWhereHas('user', fn($uq) => $uq->where('name', 'like', "%$s%")))
             ->when($request->status, fn($q, $status) => $q->where('status', $status))
             ->when($request->priority, fn($q, $p) => $q->where('priority', $p))
-            ->latest()
+            ->orderByRaw("priority = 'high' DESC")
+            ->orderBy('updated_at', 'desc')
             ->paginate(20)
             ->withQueryString();
 

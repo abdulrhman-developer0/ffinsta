@@ -176,7 +176,7 @@ class PostRenderService
             case 'code':
                 return "<code>{$text}</code>";
             case 'link':
-                $href = !empty($attrs['href']) ? $attrs['href'] : '#';
+                $href = !empty($attrs['href']) ? trim($attrs['href']) : '#';
                 
                 // Fix common user typos like https::/ or https:/
                 $href = preg_replace('~^(https?)::?/+~i', '$1://', $href);
@@ -184,8 +184,15 @@ class PostRenderService
                 // Ensure absolute URL for external links if missing protocol
                 $scheme = parse_url($href, PHP_URL_SCHEME);
                 if ($href !== '#' && empty($scheme) && strpos($href, 'mailto:') !== 0 && strpos($href, 'tel:') !== 0 && strpos($href, '/') !== 0) {
-                    $href = 'https://' . ltrim($href, '/');
+                    // Prepend https:// only if it looks like a domain (contains a dot in the first segment)
+                    $firstSegment = explode('/', $href)[0];
+                    if (strpos($firstSegment, '.') !== false) {
+                        $href = 'https://' . ltrim($href, '/');
+                    }
                 }
+                
+                // Escape to prevent breaking HTML attributes
+                $href = htmlspecialchars($href, ENT_QUOTES, 'UTF-8');
 
                 $target = '_blank';
                 return "<a href=\"{$href}\" target=\"{$target}\" rel=\"noopener noreferrer\" class=\"text-brand-600 hover:text-brand-700 underline\">{$text}</a>";
