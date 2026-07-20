@@ -52,7 +52,7 @@ class VerifyPendingVodafonePayments extends Command
             $user = User::find($payment->user_id);
             if (!$user) return;
 
-            $response = Http::timeout(8)->get("https://sms.5brahost.com/api/payment_link_check", [
+            $response = Http::timeout(8)->get("https://sms.smmxbost.com/api/payment_link_check", [
                 'phone'     => $payment->sender_phone,
                 'amount'    => $payment->amount_egp,
                 'user_name' => $user->email,

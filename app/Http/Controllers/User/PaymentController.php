@@ -31,7 +31,7 @@ class PaymentController extends Controller
             $apiKey = config('settings.sms_payment_store_key');
             $paymentInfo = Cache::remember('sms_payment_info_' . $storeId, 300, function () use ($storeId, $apiKey) {
                 try {
-                    $response = Http::timeout(5)->get("https://sms.5brahost.com/api/getPaymentInfo", [
+                    $response = Http::timeout(5)->get("https://sms.smmxbost.com/api/getPaymentInfo", [
                         'store_id' => $storeId,
                         'api'      => $apiKey,
                     ]);
@@ -81,7 +81,7 @@ class PaymentController extends Controller
             // Get fresh exchange rate from SMS Gateway
             $rate = 50.00;
             try {
-                $response = Http::timeout(5)->get("https://sms.5brahost.com/api/getPaymentInfo", [
+                $response = Http::timeout(5)->get("https://sms.smmxbost.com/api/getPaymentInfo", [
                     'store_id' => $storeId,
                     'api'      => $apiKey,
                 ]);
@@ -100,7 +100,7 @@ class PaymentController extends Controller
             $transactionId = null;
 
             try {
-                $response = Http::timeout(8)->get("https://sms.5brahost.com/api/payment_link_check", [
+                $response = Http::timeout(8)->get("https://sms.smmxbost.com/api/payment_link_check", [
                     'phone'     => $request->sender_phone,
                     'amount'    => $amountEgp,
                     'user_name' => $user->email,
@@ -119,9 +119,10 @@ class PaymentController extends Controller
                     } elseif (($resData['status'] ?? '') === 'pending' || ($resData['state'] ?? '') === 'Pending') {
                         $gatewayVerified = true; // Auto-approve pending
                         $transactionId = $resData['trans_id'] ?? ('TXN_' . md5($request->sender_phone . $amountEgp . date('Y-m-d H')));
-                    } elseif (($resData['message'] ?? '') === '<div class=\'alert alert-danger\'>Undefined array key "error_message"</div>') {
-                        // This specific error on 5brahost means the transaction is pending
-                        $gatewayVerified = true; // Auto-approve pending
+                    } elseif (isset($resData['msg']) && $resData['msg'] === 'رقم المعاملة هذا غير موجود في هذه المحفظه') {
+                        // This specific error on smmxbost means the transaction is pending
+                        // or not yet processed by the gateway
+                        $gatewayPending = true;
                         $transactionId = 'TXN_' . md5($request->sender_phone . $amountEgp . date('Y-m-d H'));
                     }
                 } else {
@@ -336,7 +337,7 @@ class PaymentController extends Controller
             try {
                 $storeId = config('settings.sms_payment_store_id');
                 $apiKey = config('settings.sms_payment_store_key');
-                $response = Http::timeout(5)->get("https://sms.5brahost.com/api/getPaymentInfo", [
+                $response = Http::timeout(5)->get("https://sms.smmxbost.com/api/getPaymentInfo", [
                     'store_id' => $storeId,
                     'api'      => $apiKey,
                 ]);

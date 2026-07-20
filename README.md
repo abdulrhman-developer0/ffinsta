@@ -129,4 +129,4 @@ The application will automatically switch to RTL (Right-to-Left) layout when Ara
 ---
 
 ## License
-Proprietary software. SOFTINGY All rights reserved.
+Proprietary software. smmxbost.com All rights reserved.

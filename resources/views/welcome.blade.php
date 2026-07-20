@@ -654,7 +654,7 @@
                     </div>
                     <span class="font-extrabold text-slate-800 dark:text-white">{{ config('app.name') }}</span>
                 </div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">&copy; {{ date('Y') }} {{ __('SOFTINGY. All rights reserved.') }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">&copy; {{ date('Y') }} {{ __('smmxbost.com. All rights reserved.') }}</p>
             </div>
 
             <!-- Links -->

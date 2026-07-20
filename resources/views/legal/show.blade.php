@@ -52,7 +52,7 @@
 
     <!-- Footer -->
     <footer class="py-8 px-6 text-center text-sm text-muted border-t border-gray-200 dark:border-gray-800">
-        <p>&copy; 2026 SOFTINGY. All rights reserved.</p>
+        <p>&copy; 2026 smmxbost.com. All rights reserved.</p>
     </footer>
 
     <script>
