@@ -93,6 +93,11 @@
                             <p class="text-xs text-muted mt-1">{{ __('Used for the WhatsApp support button in the user sidebar. Include country code without +') }}</p>
                         </div>
                         <div>
+                            <label class="form-label">{{ __('WhatsApp Channel Link') }}</label>
+                            <input type="url" name="whatsapp_channel_link" value="{{ old('whatsapp_channel_link', $settings['whatsapp_channel_link'] ?? '') }}" class="form-input" placeholder="https://whatsapp.com/channel/...">
+                            <p class="text-xs text-muted mt-1">{{ __('Used for the floating WhatsApp channel button in the user dashboard.') }}</p>
+                        </div>
+                        <div>
                             <label class="form-label">{{ __('Site Logo') }}</label>
                             <input type="file" name="site_logo" class="form-input" accept="image/*">
                             @if(config('settings.site_logo'))

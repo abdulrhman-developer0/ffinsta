@@ -26,6 +26,7 @@ class SettingsController extends Controller
         $request->validate([
             'site_name'                  => ['sometimes', 'string', 'max:100'],
             'whatsapp_number'            => ['sometimes', 'nullable', 'string', 'max:50'],
+            'whatsapp_channel_link'      => ['sometimes', 'nullable', 'url', 'max:255'],
             'site_logo'                  => ['sometimes', 'nullable', 'image', 'max:2048'],
             'site_favicon'               => ['sometimes', 'nullable', 'image', 'max:1024'],
             'points_per_follow'          => ['sometimes', 'integer', 'min:1'],
